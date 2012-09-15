@@ -25,6 +25,10 @@ abstract class Base
                     . '/' . $this->request()->attributes->get('action');
         }
 
+        if (isset($options['status'])) {
+            $this->response->setStatusCode($options['status']);
+        }
+
         $options['context'] = $this;
 
         $this->application['spark.render']->render($this->response, $options);

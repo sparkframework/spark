@@ -1,6 +1,6 @@
 <?php
 
-namespace Spark\EventListener;
+namespace Spark\Controller\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;

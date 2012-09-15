@@ -33,7 +33,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         });
 
         $app['spark.controller_class_resolver'] = $app->share(function($app) {
-            return new EventListener\ControllerClassResolver($app, $app["spark.controller_directory"]);
+            return new Controller\EventListener\ControllerClassResolver($app, $app["spark.controller_directory"]);
         });
 
         $app['spark.render'] = $app->share(function($app) {
@@ -42,9 +42,20 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $render->addFormat('text', function($response, $options) {
                 $response->headers->set('Content-Type', 'text/plain');
                 $response->setContent($options['text']);
+                return $response;
+            });
+
+            $render->addFormat('html', function($response, $options) {
+                if (!isset($options['html'])) return;
+
+                $response->setContent($options['html']);
+                $response->headers->set('Content-Type', 'text/html');
+                return $response;
             });
 
             $render->addFormat('html', function($response, $options) use ($app) {
+                if (!isset($options['script'])) return;
+
                 $script = $options['script'];
 
                 if (!pathinfo($script, PATHINFO_EXTENSION)) {
@@ -53,6 +64,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
                 $twig = $app['twig'];
                 $response->setContent($twig->render($script, (array) $options['context']));
+                return $response;
             });
 
             $render->addFormat('json', function($response, $options) {
@@ -64,6 +76,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
                 $response->setContent(json_encode($options['json'], $flags));
                 $response->headers->set('Content-Type', 'application/json');
+                return $response;
             });
 
             return $render;
@@ -72,7 +85,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         $app["dispatcher"] = $app->extend("dispatcher", function($dispatcher, $app) {
             $dispatcher->addSubscriber($app['spark.controller_class_resolver']);
 
-            $dispatcher->addSubscriber(new EventListener\AutoViewRender(
+            $dispatcher->addSubscriber(new Controller\EventListener\AutoViewRender(
                 $app['spark.render'], $app['spark.controller_class_resolver']
             ));
 

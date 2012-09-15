@@ -10,7 +10,11 @@ class RenderPipeline
 
     function addFormat($format, callable $handler)
     {
-        $this->handlers[$format] = $handler;
+        if (!isset($this->handlers[$format])) {
+            $this->handlers[$format] = [];
+        }
+
+        $this->handlers[$format][] = $handler;
         return $this;
     }
 
@@ -22,7 +26,12 @@ class RenderPipeline
             throw new \UnexpectedValueException("Unknown format '$format'");
         }
 
-        $handler = $this->handlers[$format];
-        $handler($response, $options);
+        foreach ($this->handlers[$format] as $handler) {
+            $returnValue = $handler($response, $options);
+
+            if ($returnValue instanceof Response) {
+                return $response;
+            }
+        }
     }
 }
