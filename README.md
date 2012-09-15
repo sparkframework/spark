@@ -23,16 +23,18 @@ by the `generate controller` command.
 If you open up `my_app/app/controllers/MyApp/UserController.php`
 you should see this:
 
-    <?php
+```php
+<?php
 
-    namespace MyApp;
+namespace MyApp;
 
-    class UserController
+class UserController
+{
+    function index()
     {
-        function index()
-        {
-        }
     }
+}
+```
 
 Each controller consists of actions. Each action is a public method of
 the controller class.
@@ -43,23 +45,27 @@ controller and action name. For example for the "index" action in the
 
 Put this into `my_app/app/views/user/index.html.php`:
 
-    <h1>Hello World <?= $this->name ?>!</h1>
+```html
+<h1>Hello World <?= $this->name ?>!</h1>
+```
 
 The view has access to each property of the controller class. This
 allows you to pass variables from the controller to the view. Also add
 the parameter `name` to the method, we will need it later.
 
-    <?php
+```php
+<?php
 
-    namespace MyApp;
-    
-    class UserController
+namespace MyApp;
+
+class UserController
+{
+    function index($name)
     {
-        function index($name)
-        {
-            $this->name = $name;
-        }
+        $this->name = $name;
     }
+}
+```
 
 The last part of getting our controller to do something (remotely)
 useful, is to add a route. A Route connects a URI to a controller and
@@ -67,7 +73,9 @@ action. Routes are configured in `my_app/config/routes.php`.
 
 This will do for now:
 
-    $routes->match('/{name}', 'user#index');
+```php
+$routes->match('/{name}', 'user#index');
+```
 
 That thing within the curly braces is a variable, which gets extracted
 from the URI and then gets assigned the name `name`. We've previously
