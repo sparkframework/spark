@@ -1,0 +1,29 @@
+{
+    "name": "spark/spark",
+    "description": "The totally awesome framework.",
+    "authors": [
+        {
+            "name": "Christoph Hochstrasser",
+            "email": "christoph.hochstrasser@gmail.com",
+            "homepage": "http://christophh.net"
+        }
+    ],
+    "license": "MIT",
+    "keywords": [
+        "framework", "mvc"
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "chh/sirel": "*@dev",
+        "silex/silex": "*@dev",
+        "chh/pipe-silex": "*@dev",
+        "twig/twig": "*@stable",
+        "symfony/class-loader": "*@stable"
+    },
+    "autoload": {
+        "psr-0": {
+            "Spark": "lib\/"
+        }
+    },
+    "bin": ["bin/spark"]
+}
