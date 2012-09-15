@@ -1,15 +1,12 @@
-# Spark, ignites your ideas.
-
-Spark is a _simple_ web framework in the spirit of Rails
-which makes it simple to start web development.
+# Spark — A Classy Web Framework for Rapid Development
 
 ## Getting started
 
-    % php spark.phar my_app
+    % spark.phar my_app
     Creating new application 'my_app'...
     Done.
     % cd my_app
-    % ./vendor/bin/bob server
+    % spark.phar server
     PHP Development Server started on port 8080.
     Quit with CTRL+C.
 
@@ -19,9 +16,9 @@ which makes it simple to start web development.
 
 Controllers make your app actually do things. Controllers go into the
 `controllers/` directory in your application, and are best generated
-by the `generate-controller` task.
+by the `generate controller` command.
 
-    % spark generate:controller user
+    % spark.phar generate controller user
 
 Each controller consists of actions. Each action is a public method of
 the controller class.
@@ -32,7 +29,6 @@ the controller class.
 
     class UserController
     {
-        # This gets invoked when "/user" is viewed in the browser.
         function index()
         {
         }
@@ -42,9 +38,12 @@ The HTML goes into a "View". The view's file name gets taken from the
 controller and action name. For example for the "index" action in the 
 "UserController" the view "user/index.phtml" gets used.
 
+Put this into `my_app/app/views/user/index.html.php`:
+
+    <h1>Hello World <?= $this->name ?>!</h1>
+
 The view has access to each property of the controller class. This
-allows you to pass data from the controller to the view, for 
-displaying it to the user of your application.
+allows you to pass variables from the controller to the view.
 
     <?php
 
@@ -52,29 +51,29 @@ displaying it to the user of your application.
     
     class UserController
     {
-        function index()
+        function index($name)
         {
-            $this->users = User::select();
+            $this->name = $name;
         }
     }
 
-### Models
+The last part of getting our controller to do something (remotely)
+useful, is to add a route. A Route connects a URI to a controller and
+action. Routes are configured in `my_app/config/routes.php`.
 
-Generate Models:
+This will do for now:
 
-    % spark generate model User username:string password:string
+    $routes->match('/{name}', 'index#index');
 
-Generated Class:
+That thing within the curly braces is a variable, which gets extracted
+from the URI and then gets assigned the name `name`. We've previously
+declared that our action needs an argument `name`, so Spark figures this
+out and passes the route variable along to the action.
 
-    <?php
+Last but not least, we assign the controller and action to the route.
+This is done with `$controller#$action`. Controller names are converted
+from `under_score` to `UnderScore` and then suffixed with `Controller`.
+So `index` gets transformed to `IndexController`.
 
-    namespace MyApp;
-
-    class User
-    {
-        use \Spark\Model\Traits\SecurePassword;
-
-        public $username;
-        public $password;
-    }
-
+If you open <http://localhost:8080/John%20Doe> in your browser you
+should see "Hello World John Doe!" in big letters.
