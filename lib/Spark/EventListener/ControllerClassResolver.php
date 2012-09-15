@@ -85,7 +85,7 @@ class ControllerClassResolver implements EventSubscriberInterface
         if (class_exists($name)) {
             $class = $name;
         } else {
-            $class = $this->camelize($name) . "Controller";
+            $class = '\\' . $this->application['spark.app.name'] . '\\' . $this->camelize($name) . "Controller";
         }
 
         if (isset($this->controllers[$class])) {

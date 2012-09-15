@@ -23,7 +23,11 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
         $app["spark.class_loader"] = $app->share(function($app) {
             $loader = new UniversalClassLoader;
-            $loader->registerPrefixFallbacks((array) $app['spark.controller_directory']);
+            $loader->registerPrefixFallbacks([
+                "{$app['spark.root']}/lib"
+            ]);
+
+            $loader->registerNamespace($app['spark.app.name'], $app['spark.controller_directory']);
 
             return $loader;
         });
