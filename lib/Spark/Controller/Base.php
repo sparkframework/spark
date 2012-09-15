@@ -13,16 +13,33 @@ abstract class Base
     protected $response;
     protected $flash;
 
+    private $filters = [];
+
     function __construct()
     {
         $this->response = new Response;
+        $this->setup();
     }
 
-    function render($options = null)
+    function setup()
+    {}
+
+    function beforeFilter($filter, $options = [])
     {
-        if (null === $options) {
-            $options['script'] = $this->request()->attributes->get('controller')
-                    . '/' . $this->request()->attributes->get('action');
+        return $this->addFilter("before", $filter, $options);
+    }
+
+    function afterFilter($filter, $options = [])
+    {
+        return $this->addFilter("after", $filter, $options);
+    }
+
+    function render($options = [])
+    {
+        $attributes = $this->request()->attributes;
+
+        if (!$options) {
+            $options['script'] = $attributes->get('controller') . '/' . $attributes->get('action');
         }
 
         if (isset($options['status'])) {
@@ -50,6 +67,11 @@ abstract class Base
         return $this->flash ?: $this->flash = $this->application['session']->getFlashBag();
     }
 
+    function session()
+    {
+        return $this->application['session'];
+    }
+
     function application()
     {
         return $this->application;
@@ -58,5 +80,45 @@ abstract class Base
     function setApplication(Application $application)
     {
         $this->application = $application;
+    }
+
+    function onBeforeFilter()
+    {
+        return $this->dispatchFilters('before');
+    }
+
+    function onAfterFilter()
+    {
+        return $this->dispatchFilters('after');
+    }
+
+    private function dispatchFilters($type)
+    {
+        if (!isset($this->filters[$type])) return;
+
+        foreach ($this->filters[$type] as $filter) {
+            list($callback, $options) = $filter;
+
+            $returnValue = $callback($this);
+
+            if ($returnValue instanceof Response) return $returnValue;
+        }
+    }
+
+    private function addFilter($type, $filter, $options)
+    {
+        if (!isset($this->filters[$type])) {
+            $this->filters[$type] = [];
+        }
+
+        if (is_string($filter) and is_callable([$this, $filter])) {
+            $callback = [$this, $filter];
+        } else if (is_callable($filter)) {
+            $callback = $filter;
+        }
+
+        $this->filters[$type][] = [$callback, $options];
+
+        return $this;
     }
 }

@@ -57,12 +57,12 @@ class ControllerClassResolver implements EventSubscriberInterface
 
         $controller = $this->getController($controllerName);
 
-        if (is_callable([$controller, "beforeFilter"])) {
-            $route->before([$controller, "beforeFilter"]);
+        if (is_callable([$controller, "onBeforeFilter"])) {
+            $route->before([$controller, "onBeforeFilter"]);
         }
 
-        if (is_callable([$controller, "afterFilter"])) {
-            $route->after([$controller, "afterFilter"]);
+        if (is_callable([$controller, "onAfterFilter"])) {
+            $route->after([$controller, "onAfterFilter"]);
         }
 
         $request->attributes->set('action', $actionName);
