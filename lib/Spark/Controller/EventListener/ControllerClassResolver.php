@@ -5,8 +5,10 @@ namespace Spark\Controller\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Silex\Application;
+use Spark\Core\ApplicationAware;
 
 class ControllerClassResolver implements EventSubscriberInterface
 {
@@ -52,10 +54,16 @@ class ControllerClassResolver implements EventSubscriberInterface
             $actionName = $request->attributes->get('action');
         }
 
+        $moduleName = $request->attributes->get('module');
+
         $route = $this->application['routes']->get($request->attributes->get('_route'));
         $action = $this->camelize($actionName);
 
-        $controller = $this->getController($controllerName);
+        $controller = $this->getController($controllerName, $moduleName);
+
+        if (null === $controller) {
+            return;
+        }
 
         if (is_callable([$controller, "onBeforeFilter"])) {
             $route->before([$controller, "onBeforeFilter"]);
@@ -80,12 +88,20 @@ class ControllerClassResolver implements EventSubscriberInterface
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
 
-    function getController($name)
+    function getController($name, $module = null)
     {
+        if (null === $module) {
+            $module = $this->application['spark.default_module'];
+        }
+
         if (class_exists($name)) {
             $class = $name;
         } else {
-            $class = '\\' . $this->application['spark.app.name'] . '\\' . $this->camelize($name) . "Controller";
+            $class = '\\' . $this->camelize($module) . '\\' . $this->camelize($name) . "Controller";
+
+            if (!class_exists($class)) {
+                return;
+            }
         }
 
         if (isset($this->controllers[$class])) {
@@ -93,7 +109,7 @@ class ControllerClassResolver implements EventSubscriberInterface
         } else {
             $controller = new $class;
 
-            if (is_callable([$controller, "setApplication"])) {
+            if ($controller instanceof ApplicationAware or is_callable([$controller, "setApplication"])) {
                 $controller->setApplication($this->application);
             }
 

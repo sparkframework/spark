@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpFoundation\Response;
 
 use Spark\Controller\RenderPipeline;
+use Spark\Controller\ViewContext;
 
 class AutoViewRender implements EventSubscriberInterface
 {
@@ -17,7 +18,7 @@ class AutoViewRender implements EventSubscriberInterface
     static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => 'renderView'
+            KernelEvents::VIEW => ['renderView']
         ];
     }
 
@@ -31,6 +32,12 @@ class AutoViewRender implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $attributes = $request->attributes;
+
+        $result = $event->getControllerResult();
+
+        if (!empty($result)) {
+            return new Response((string) $result);
+        }
 
         if ($attributes->get('spark.disable_autorender', false)) {
             return;
@@ -46,9 +53,10 @@ class AutoViewRender implements EventSubscriberInterface
         $controller = $this->resolver->getController($controllerName);
         $response = $controller->response();
 
-        $this->renderPipeline->render($response, [
-            'script' => "$controllerName/$actionName", 'context' => $controller
-        ]);
+        $response = $this->renderPipeline->render([
+            'script' => "$controllerName/$actionName",
+            'context' => $controller
+        ], $response);
 
         $event->setResponse($response);
     }

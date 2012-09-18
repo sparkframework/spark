@@ -6,32 +6,71 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RenderPipeline
 {
-    protected $handlers = [];
+    protected $renderers = [];
 
-    function addFormat($format, callable $handler)
+    protected $formats = [
+        'json' => 'application/json',
+        'html' => 'text/html',
+        'text' => 'text/plain',
+        'xml' => 'application/xml'
+    ];
+
+    function addFormat(callable $renderer, $contentType = null)
     {
-        if (!isset($this->handlers[$format])) {
-            $this->handlers[$format] = [];
+        if (is_object($renderer)) {
+            $class = get_class($renderer);
+
+            if (is_callable([$class, "getContentType"])) {
+                $contentType = $class::getContentType();
+            }
         }
 
-        $this->handlers[$format][] = $handler;
+        if (null === $contentType) {
+            throw new \InvalidArgumentException("No Content Type given");
+        }
+
+        if (!isset($this->renderers[$contentType])) {
+            $this->renderers[$contentType] = [];
+        }
+
+        $this->renderers[$contentType][] = $renderer;
         return $this;
     }
 
-    function render(Response $response, $options = [])
+    function invokeHandlers(ViewContext $context)
     {
-        $format = key(array_intersect_key($this->handlers, $options)) ?: "html";
+        $format = $context->format;
+        $contentType = $this->formats[$format];
 
-        if (!isset($this->handlers[$format])) {
-            throw new \UnexpectedValueException("Unknown format '$format'");
+        if (!isset($this->renderers[$contentType])) {
+            throw new \UnexpectedValueException("No Renderer registered for '$contentType'");
         }
 
-        foreach ($this->handlers[$format] as $handler) {
-            $returnValue = $handler($response, $options);
+        foreach ($this->renderers[$contentType] as $renderer) {
+            $returnValue = $renderer($context);
 
-            if ($returnValue instanceof Response) {
-                return $response;
+            if (null !== $returnValue) {
+                return $returnValue;
             }
         }
+    }
+
+    function render($options = [], Response $response = null)
+    {
+        $format = key(array_intersect_key($this->formats, $options)) ?: "html";
+
+        $response = $response ?: new Response;
+
+        $viewContext = new ViewContext($this);
+        $viewContext->format = $format;
+        $viewContext->context = @$options['context'];
+        $viewContext->options = $options;
+
+        $response->setContent($viewContext->render());
+
+        $contentType = $this->formats[$format];
+        $response->headers->set('Content-Type', $contentType);
+
+        return $response;
     }
 }

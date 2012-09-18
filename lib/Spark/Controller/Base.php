@@ -4,16 +4,16 @@ namespace Spark\Controller;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
+use Spark\Core\ApplicationAware;
 
-abstract class Base
+abstract class Base implements ApplicationAware
 {
-    use ActionHelper\Redirect;
+    use Traits\Redirect;
+    use Traits\Filters;
 
     protected $application;
     protected $response;
     protected $flash;
-
-    private $filters = [];
 
     function __construct()
     {
@@ -24,16 +24,6 @@ abstract class Base
     function setup()
     {}
 
-    function beforeFilter($filter, $options = [])
-    {
-        return $this->addFilter("before", $filter, $options);
-    }
-
-    function afterFilter($filter, $options = [])
-    {
-        return $this->addFilter("after", $filter, $options);
-    }
-
     function render($options = [])
     {
         $attributes = $this->request()->attributes;
@@ -43,13 +33,11 @@ abstract class Base
         }
 
         if (isset($options['status'])) {
-            $this->response->setStatusCode($options['status']);
+            $this->response()->setStatusCode($options['status']);
+            unset($options['status']);
         }
 
-        $options['context'] = $this;
-
-        $this->application['spark.render']->render($this->response, $options);
-        return $this->response;
+        return $this->application['spark.render']->render($options, $this->response());
     }
 
     function request()
@@ -80,45 +68,5 @@ abstract class Base
     function setApplication(Application $application)
     {
         $this->application = $application;
-    }
-
-    function onBeforeFilter()
-    {
-        return $this->dispatchFilters('before');
-    }
-
-    function onAfterFilter()
-    {
-        return $this->dispatchFilters('after');
-    }
-
-    private function dispatchFilters($type)
-    {
-        if (!isset($this->filters[$type])) return;
-
-        foreach ($this->filters[$type] as $filter) {
-            list($callback, $options) = $filter;
-
-            $returnValue = $callback($this);
-
-            if ($returnValue instanceof Response) return $returnValue;
-        }
-    }
-
-    private function addFilter($type, $filter, $options)
-    {
-        if (!isset($this->filters[$type])) {
-            $this->filters[$type] = [];
-        }
-
-        if (is_string($filter) and is_callable([$this, $filter])) {
-            $callback = [$this, $filter];
-        } else if (is_callable($filter)) {
-            $callback = $filter;
-        }
-
-        $this->filters[$type][] = [$callback, $options];
-
-        return $this;
     }
 }

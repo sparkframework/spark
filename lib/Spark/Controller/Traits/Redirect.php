@@ -1,6 +1,6 @@
 <?php
 
-namespace Spark\Controller\ActionHelper;
+namespace Spark\Controller\Traits;
 
 trait Redirect
 {

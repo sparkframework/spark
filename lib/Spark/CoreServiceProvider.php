@@ -21,13 +21,21 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return "{$app['spark.root']}/app/views";
         };
 
+        $app['spark.default_module'] = function($app) {
+            return $app['spark.app.name'];
+        };
+
         $app["spark.class_loader"] = $app->share(function($app) {
             $loader = new UniversalClassLoader;
+
             $loader->registerPrefixFallbacks([
-                "{$app['spark.root']}/lib"
+                "{$app['spark.root']}/lib",
             ]);
 
-            $loader->registerNamespace($app['spark.app.name'], $app['spark.controller_directory']);
+            $loader->registerNamespaceFallbacks([
+                $app['spark.controller_directory'],
+                "{$app['spark.root']}/lib"
+            ]);
 
             return $loader;
         });
@@ -39,45 +47,37 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         $app['spark.render'] = $app->share(function($app) {
             $render = new Controller\RenderPipeline;
 
-            $render->addFormat('text', function($response, $options) {
-                $response->headers->set('Content-Type', 'text/plain');
-                $response->setContent($options['text']);
-                return $response;
-            });
+            $render->addFormat(function($viewContext) {
+                return $viewContext->options['text'];
+            }, 'text/plain');
 
-            $render->addFormat('html', function($response, $options) {
-                if (!isset($options['html'])) return;
+            $render->addFormat(function($viewContext) {
+                if (isset($viewContext->options['html'])) {
+                    return $viewContext->options['html'];
+                }
+            }, 'text/html');
 
-                $response->setContent($options['html']);
-                $response->headers->set('Content-Type', 'text/html');
-                return $response;
-            });
+            $render->addFormat(function($viewContext) use ($app) {
+                if (!isset($viewContext->options['script'])) return;
 
-            $render->addFormat('html', function($response, $options) use ($app) {
-                if (!isset($options['script'])) return;
-
-                $script = $options['script'];
+                $script = $viewContext->options['script'];
 
                 if (!pathinfo($script, PATHINFO_EXTENSION)) {
                     $script .= '.twig';
                 }
 
-                $twig = $app['twig'];
-                $response->setContent($twig->render($script, (array) $options['context']));
-                return $response;
-            });
+                return $app['twig']->render($script, (array) $viewContext->context);
+            }, 'text/html');
 
-            $render->addFormat('json', function($response, $options) {
+            $render->addFormat(function($viewContext) {
                 $flags = 0;
 
                 if (@$options['pretty']) {
                     $flags |= JSON_PRETTY_PRINT;
                 }
 
-                $response->setContent(json_encode($options['json'], $flags));
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
-            });
+                return json_encode($viewContext->options['json'], $flags);
+            }, 'application/json');
 
             return $render;
         });
@@ -102,16 +102,16 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             }
         ]);
 
+        $app->register(new PipeServiceProvider, [
+            'pipe.root' => function($app) { return "{$app['spark.root']}/app/assets"; }
+        ]);
+
         $app->register(new SessionServiceProvider);
         $app->register(new UrlGeneratorServiceProvider);
     }
 
     function boot(SilexApplication $app)
     {
-        $app->register(new PipeServiceProvider, [
-            'pipe.root' => function($app) { return "{$app['spark.root']}/app/assets"; }
-        ]);
-
         $app['spark.class_loader']->register();
     }
 }
