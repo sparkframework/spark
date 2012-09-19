@@ -1,6 +1,6 @@
 <?php
 
-namespace Spark;
+namespace Spark\Controller;
 
 class ControllerCollection extends \Silex\ControllerCollection
 {

@@ -9,6 +9,10 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
 {
     function register(Application $app)
     {
+        $app["controllers_factory"] = function($app) {
+            return new ControllerCollection($app["route_factory"]);
+        };
+
         $app->register(new TwigServiceProvider, [
             'twig.path' => function($app) {
                 return $app['spark.view_directory'];
@@ -31,7 +35,7 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
             return new EventListener\ControllerClassResolver($app, $app["spark.controller_directory"]);
         });
 
-        $app['spark.render'] = $app->share(function($app) {
+        $app['spark.render_pipeline'] = $app->share(function($app) {
             $render = new RenderPipeline;
 
             $render->addFormat(function($viewContext) {
@@ -59,7 +63,7 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
             $render->addFormat(function($viewContext) {
                 $flags = 0;
 
-                if (@$options['pretty']) {
+                if (@$viewContext->options['pretty']) {
                     $flags |= JSON_PRETTY_PRINT;
                 }
 
@@ -73,7 +77,7 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
             $dispatcher->addSubscriber($app['spark.controller_class_resolver']);
 
             $dispatcher->addSubscriber(new EventListener\AutoViewRender(
-                $app['spark.render'], $app['spark.controller_class_resolver']
+                $app['spark.render_pipeline'], $app['spark.controller_class_resolver']
             ));
 
             return $dispatcher;

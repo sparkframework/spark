@@ -37,7 +37,7 @@ abstract class Base implements ApplicationAware
             unset($options['status']);
         }
 
-        return $this->application['spark.render']->render($options, $this->response());
+        return $this->application['spark.render_pipeline']->render($options, $this->response());
     }
 
     function request()
