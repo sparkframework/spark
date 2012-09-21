@@ -1,8 +1,16 @@
 # Spark — A Classy Web Framework for Rapid Development
 
-## Quick Reference
+## Getting started
 
-_This is the stuff that already works_
+    % spark.phar my_app
+    Creating new application 'my_app'...
+    Done.
+    % cd my_app
+    % spark.phar server
+    PHP Development Server started on port 8080.
+    Quit with CTRL+C.
+
+## Quick Reference
 
 ### Controllers
 
