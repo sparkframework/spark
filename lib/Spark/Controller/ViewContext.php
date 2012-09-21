@@ -6,20 +6,59 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ViewContext
 {
+    use ViewHelper\Assets;
+
     public $format = "html";
     public $context;
     public $options = [];
+    public $script;
+    public $parent;
+    public $response;
 
-    protected $renderPipeline;
+    protected $blocks = [];
+    protected $application;
 
-    function __construct(RenderPipeline $renderPipeline)
+    function __construct(\Spark\Application $app)
     {
-        $this->renderPipeline = $renderPipeline;
+        $this->application = $app;
+        $this->context = (object) [];
     }
 
-    function render()
+    function setBlock($name, $content)
     {
-        return $this->renderPipeline->invokeHandlers($this);
+        $this->blocks[$name] = $content;
+        return $this;
+    }
+
+    function block($name)
+    {
+        if (isset($this->blocks[$name])) {
+            return (string) $this->blocks[$name];
+        }
+    }
+
+    function blocks()
+    {
+        return array_map('strval', $this->blocks);
+    }
+
+    function __get($property)
+    {
+        if (isset($this->context->$property)) {
+            if (is_callable($this->context->$property)) {
+                $callback = $this->context->$property;
+                return $callback($this);
+            }
+
+            return $this->context->$property;
+        }
+    }
+
+    function __call($method, $argv)
+    {
+        if (isset($this->$method)) {
+            return call_user_func_array($this->$method, $argv);
+        }
     }
 
     function __toString()
@@ -28,6 +67,7 @@ class ViewContext
             return $this->render();
         } catch (\Exception $e) {
             # Ignore
+            # TODO: Log exception
         }
     }
 }

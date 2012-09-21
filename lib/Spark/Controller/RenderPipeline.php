@@ -3,56 +3,98 @@
 namespace Spark\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use CHH\FileUtils\PathStack;
 
 class RenderPipeline
 {
-    protected $renderers = [];
+    protected $contentTypeHandlers = [];
+    protected $fallbackHandlers = [];
 
-    protected $formats = [
+    public $formats = [
         'json' => 'application/json',
         'html' => 'text/html',
         'text' => 'text/plain',
         'xml' => 'application/xml'
     ];
 
-    function addFormat(callable $renderer, $contentType = null)
+    protected $layout;
+    protected $scriptPath;
+
+    protected $defaultContext;
+
+    function __construct(ViewContext $defaultContext, $scriptPath = null)
     {
-        if (is_object($renderer)) {
-            $class = get_class($renderer);
+        $this->scriptPath = new PathStack();
 
-            if (is_callable([$class, "getContentType"])) {
-                $contentType = $class::getContentType();
-            }
+        if ($scriptPath !== null) {
+            $this->scriptPath->appendPaths($scriptPath);
         }
 
-        if (null === $contentType) {
-            throw new \InvalidArgumentException("No Content Type given");
-        }
+        $this->scriptPath->appendExtensions(['.phtml', '.html.php']);
 
-        if (!isset($this->renderers[$contentType])) {
-            $this->renderers[$contentType] = [];
-        }
+        $this->defaultContext = $defaultContext;
 
-        $this->renderers[$contentType][] = $renderer;
+        $this->layout = $this->createContext();
+        $this->layout->script = "default";
+    }
+
+    function prependScriptPath($path)
+    {
+        $this->scriptPath->prependPaths($path);
         return $this;
     }
 
-    function invokeHandlers(ViewContext $context)
+    function addScriptPath($path)
+    {
+        $this->scriptPath->appendPaths($path);
+        return $this;
+    }
+
+    function addFormat($contentType, callable $handler)
+    {
+        if (!isset($this->contentTypeHandlers[$contentType])) {
+            $this->contentTypeHandlers[$contentType] = [];
+        }
+
+        $this->contentTypeHandlers[$contentType][] = $handler;
+        return $this;
+    }
+
+    function addFallback(callable $handler)
+    {
+        $this->fallbackHandlers[] = $handler;
+        return $this;
+    }
+
+    function renderContext(ViewContext $context)
     {
         $format = $context->format;
-        $contentType = $this->formats[$format];
+        $handlers = [];
 
-        if (!isset($this->renderers[$contentType])) {
-            throw new \UnexpectedValueException("No Renderer registered for '$contentType'");
+        if ($context->script) {
+            $context->script = $this->scriptPath->find($context->script);
         }
 
-        foreach ($this->renderers[$contentType] as $renderer) {
-            $returnValue = $renderer($context);
+        if ($contentType = @$this->formats[$format] and isset($this->contentTypeHandlers[$contentType])) {
+            $handlers = array_merge($handlers, $this->contentTypeHandlers[$contentType]);
+        }
+
+        $handlers = array_merge($handlers, $this->fallbackHandlers);
+
+        foreach ($handlers as $handler) {
+            $returnValue = $handler($context);
 
             if (null !== $returnValue) {
-                return $returnValue;
+                break;
             }
         }
+
+        if ($context->parent) {
+            $context->parent->setBlock('content', $returnValue);
+            return $this->renderContext($context->parent);
+        }
+
+        return $returnValue;
     }
 
     function render($options = [], Response $response = null)
@@ -61,16 +103,30 @@ class RenderPipeline
 
         $response = $response ?: new Response;
 
-        $viewContext = new ViewContext($this);
+        $viewContext = $this->createContext();
+        $viewContext->response = $response;
+
+        if (isset($options['script'])) {
+            $viewContext->script = $options['script'];
+        }
+
         $viewContext->format = $format;
         $viewContext->context = @$options['context'];
         $viewContext->options = $options;
+        $viewContext->parent = $this->layout;
 
-        $response->setContent($viewContext->render());
+        $response->setContent($this->renderContext($viewContext));
 
-        $contentType = $this->formats[$format];
-        $response->headers->set('Content-Type', $contentType);
+        if (!$response->headers->has('Content-Type')) {
+            $contentType = $this->formats[$format];
+            $response->headers->set('Content-Type', $contentType);
+        }
 
         return $response;
+    }
+
+    protected function createContext()
+    {
+        return clone $this->defaultContext;
     }
 }

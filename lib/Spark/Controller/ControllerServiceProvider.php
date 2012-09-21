@@ -13,18 +13,24 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
             return new ControllerCollection($app["route_factory"]);
         };
 
-        $app->register(new TwigServiceProvider, [
-            'twig.path' => function($app) {
-                return $app['spark.view_directory'];
-            }
-        ]);
-
         $app['spark.controller_directory'] = function($app) {
             return "{$app['spark.root']}/app/controllers";
         };
 
-        $app['spark.view_directory'] = function($app) {
-            return "{$app['spark.root']}/app/views";
+        $app['spark.view_path'] = function($app) {
+            return [
+                 "{$app['spark.root']}/app/views",
+                 "{$app['spark.root']}/app/views/layouts"
+            ];
+        };
+
+        $app['spark.view_context'] = $app->share(function($app) {
+            $class = $app['spark.view_context_class'];
+            return new $class($app);
+        });
+
+        $app['spark.view_context_class'] = function($app) {
+            return "\\{$app['spark.app.name']}\\ViewContext";
         };
 
         $app['spark.default_module'] = function($app) {
@@ -36,31 +42,21 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
         });
 
         $app['spark.render_pipeline'] = $app->share(function($app) {
-            $render = new RenderPipeline;
+            $render = new RenderPipeline($app['spark.view_context'], $app['spark.view_path']);
 
-            $render->addFormat(function($viewContext) {
+            $render->addFormat('text/plain', function($viewContext) {
+                $viewContext->parent = null;
                 return $viewContext->options['text'];
-            }, 'text/plain');
+            });
 
-            $render->addFormat(function($viewContext) {
+            $render->addFormat('text/html', function($viewContext) {
                 if (isset($viewContext->options['html'])) {
                     return $viewContext->options['html'];
                 }
-            }, 'text/html');
+            });
 
-            $render->addFormat(function($viewContext) use ($app) {
-                if (!isset($viewContext->options['script'])) return;
-
-                $script = $viewContext->options['script'];
-
-                if (!pathinfo($script, PATHINFO_EXTENSION)) {
-                    $script .= '.twig';
-                }
-
-                return $app['twig']->render($script, (array) $viewContext->context);
-            }, 'text/html');
-
-            $render->addFormat(function($viewContext) {
+            $render->addFormat('application/json', function($viewContext) {
+                $viewContext->parent = null;
                 $flags = 0;
 
                 if (@$viewContext->options['pretty']) {
@@ -68,7 +64,21 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
                 }
 
                 return json_encode($viewContext->options['json'], $flags);
-            }, 'application/json');
+            });
+
+            $render->addFallback(function($viewContext) {
+                $template = \MetaTemplate\Template::create($viewContext->script);
+
+                if ($viewContext->response) {
+                    $headers = $viewContext->response->headers;
+
+                    if (is_callable([$template, 'getDefaultContentType']) and !$headers->has('Content-Type')) {
+                        $headers->set('Content-Type', $template->getDefaultContentType());
+                    }
+                }
+
+                return $template->render($viewContext);
+            });
 
             return $render;
         });
