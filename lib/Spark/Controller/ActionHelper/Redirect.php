@@ -14,6 +14,11 @@ trait Redirect
         # use the default route. This way you can do $this->redirect(['controller' => 'index']);`
         if (!$options and is_array($url)) {
             $params = $url;
+
+            if (!isset($params['controller'])) {
+                $params['controller'] = $this->request()->attributes->get('controller');
+            }
+
             $url = "default";
         }
 
