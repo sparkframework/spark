@@ -67,6 +67,8 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
             });
 
             $render->addFallback(function($viewContext) {
+                if (!isset($viewContext->script)) return;
+
                 $template = \MetaTemplate\Template::create($viewContext->script);
 
                 if ($viewContext->response) {

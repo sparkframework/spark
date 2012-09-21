@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ViewContext
 {
     use ViewHelper\Assets;
+    use ViewHelper\Flash;
 
     public $format = "html";
     public $context;
@@ -59,6 +60,10 @@ class ViewContext
         if (isset($this->$method)) {
             return call_user_func_array($this->$method, $argv);
         }
+
+        throw new \BadMethodCallException(sprintf(
+            'Call to undefined method %s::%s()', get_called_class(), $method
+        ));
     }
 
     function __toString()
