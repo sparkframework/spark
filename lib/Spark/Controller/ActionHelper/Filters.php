@@ -1,6 +1,6 @@
 <?php
 
-namespace Spark\Controller\Traits;
+namespace Spark\Controller\ActionHelper;
 
 trait Filters
 {

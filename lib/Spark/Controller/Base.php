@@ -8,8 +8,8 @@ use Spark\Core\ApplicationAware;
 
 abstract class Base implements ApplicationAware
 {
-    use Traits\Redirect;
-    use Traits\Filters;
+    use ActionHelper\Redirect;
+    use ActionHelper\Filters;
 
     protected $application;
     protected $response;
