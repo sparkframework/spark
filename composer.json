@@ -18,7 +18,9 @@
         "silex/silex": "*@dev",
         "chh/pipe-silex": "*@dev",
         "twig/twig": "*@stable",
-        "symfony/class-loader": "*@stable"
+        "symfony/class-loader": "*@stable",
+        "chh/fileutils": "*@dev",
+        "chh/meta-template": "*@dev"
     },
     "autoload": {
         "psr-0": {
