@@ -7,9 +7,6 @@ use CHH\FileUtils\PathStack;
 
 class RenderPipeline
 {
-    protected $contentTypeHandlers = [];
-    protected $fallbackHandlers = [];
-
     public $formats = [
         'json' => 'application/json',
         'html' => 'text/html',
@@ -17,10 +14,13 @@ class RenderPipeline
         'xml' => 'application/xml'
     ];
 
-    protected $layout;
-    protected $scriptPath;
+    public $layout;
+    public $renderLayout = true;
 
+    protected $scriptPath;
     protected $defaultContext;
+    protected $contentTypeHandlers = [];
+    protected $fallbackHandlers = [];
 
     function __construct(ViewContext $defaultContext, $scriptPath = null)
     {
@@ -113,7 +113,14 @@ class RenderPipeline
         $viewContext->format = $format;
         $viewContext->context = @$options['context'];
         $viewContext->options = $options;
-        $viewContext->parent = $this->layout;
+
+        if ($this->renderLayout and @$options['layout'] !== false) {
+            $viewContext->parent = clone $this->layout;
+
+            if (!empty($options['layout'])) {
+                $viewContext->parent->script = $options['layout'];
+            }
+        }
 
         $response->setContent($this->renderContext($viewContext));
 
