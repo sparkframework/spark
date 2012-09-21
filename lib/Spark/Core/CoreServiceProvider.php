@@ -15,6 +15,10 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 {
     function register(Application $app)
     {
+        $app['config'] = $app->share(function($app) {
+            return new ConfigBuilder;
+        });
+
         $app["controllers_factory"] = function($app) {
             return new \Spark\Controller\ControllerCollection($app["route_factory"]);
         };
@@ -45,6 +49,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
     function boot(Application $app)
     {
+        $app['config']->flush($app);
         $app['spark.class_loader']->register();
     }
 }
