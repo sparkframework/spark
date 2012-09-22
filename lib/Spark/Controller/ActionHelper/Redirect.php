@@ -2,6 +2,9 @@
 
 namespace Spark\Controller\ActionHelper;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+
 trait Redirect
 {
     function redirect($url, $options = [])
@@ -28,5 +31,18 @@ trait Redirect
         }
 
         return $this->application->redirect($url, $code);
+    }
+
+    function forward($url, $options = [])
+    {
+        $method = @$options['method'] ?: 'GET';
+        $params = @$options['params'] ?: [];
+
+        if ($route = $this->application['routes']->get($url)) {
+            $url = $this->application['url_generator']->generate($url, $params, false);
+        }
+
+        $request = Request::create($url, $method);
+        return $this->application->handle($request, HttpKernelInterface::SUB_REQUEST);
     }
 }
