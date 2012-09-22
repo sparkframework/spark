@@ -67,7 +67,7 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
             });
 
             $render->addFallback(function($viewContext) {
-                if (!isset($viewContext->script)) return;
+                if (empty($viewContext->script)) return;
 
                 $template = \MetaTemplate\Template::create($viewContext->script);
 
@@ -98,5 +98,17 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
 
     function boot(Application $app)
     {
+        $app->error(function(\Exception $e, $code) use ($app) {
+            $renderPipeline = $app['spark.render_pipeline'];
+
+            if ($script = $renderPipeline->scriptPath->find("error/$code")) {
+                $context = (object) [
+                    'exception' => $e,
+                    'code' => $code
+                ];
+
+                return $renderPipeline->render(['script' => "error/$code", 'context' => $context]);
+            }
+        });
     }
 }
