@@ -16,8 +16,8 @@ class RenderPipeline
 
     public $layout;
     public $renderLayout = true;
+    public $scriptPath;
 
-    protected $scriptPath;
     protected $defaultContext;
     protected $contentTypeHandlers = [];
     protected $fallbackHandlers = [];
@@ -36,18 +36,6 @@ class RenderPipeline
 
         $this->layout = $this->createContext();
         $this->layout->script = "default";
-    }
-
-    function prependScriptPath($path)
-    {
-        $this->scriptPath->prependPaths($path);
-        return $this;
-    }
-
-    function addScriptPath($path)
-    {
-        $this->scriptPath->appendPaths($path);
-        return $this;
     }
 
     function addFormat($contentType, callable $handler)

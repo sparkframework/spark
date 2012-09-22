@@ -8,6 +8,7 @@ class ViewContext
 {
     use ViewHelper\Assets;
     use ViewHelper\Flash;
+    use ViewHelper\Uri;
 
     public $format = "html";
     public $context;
