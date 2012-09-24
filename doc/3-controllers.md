@@ -37,7 +37,7 @@ class IndexController extends ApplicationController
     private function checkAuth()
     {}
 
-    function hello($name)
+    function helloAction($name)
     {
         $this->name = $name;
     }

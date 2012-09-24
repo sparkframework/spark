@@ -33,6 +33,11 @@ abstract class Base implements ApplicationAware
             $options['script'] = $attributes->get('controller') . '/' . $attributes->get('action');
         }
 
+        if (is_string($options)) {
+            $script = $options;
+            $options = ['script' => $script];
+        }
+
         if (isset($options['status'])) {
             $this->response()->setStatusCode($options['status']);
             unset($options['status']);
@@ -46,6 +51,20 @@ abstract class Base implements ApplicationAware
         }
 
         return $this->application['spark.render_pipeline']->render($options, $response);
+    }
+
+    function rescue($exceptionClass, $method)
+    {
+        if (is_callable([$this, $method])) {
+            $this->application->error($exceptionClass, [$this, $method]);
+        } else {
+            $this->application->error($exceptionClass, $method);
+        }
+    }
+
+    function notFound($message = '')
+    {
+        return $this->application->abort(404, $message);
     }
 
     function request()
