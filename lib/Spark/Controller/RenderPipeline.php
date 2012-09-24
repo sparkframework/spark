@@ -78,6 +78,10 @@ class RenderPipeline
         }
 
         if ($context->parent) {
+            foreach ($context->blocks() as $block => $content) {
+                $context->parent->setBlock($block, $content);
+            }
+
             $context->parent->setBlock('content', $returnValue);
             return $this->renderContext($context->parent);
         }

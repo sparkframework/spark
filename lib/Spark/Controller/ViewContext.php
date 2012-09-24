@@ -20,16 +20,37 @@ class ViewContext
     protected $blocks = [];
     protected $application;
 
+    protected $capturing;
+
     function __construct(\Spark\Application $app)
     {
         $this->application = $app;
         $this->context = (object) [];
+        $this->capturing = new \SplStack;
     }
 
     function setBlock($name, $content)
     {
         $this->blocks[$name] = $content;
         return $this;
+    }
+
+    function capture($name)
+    {
+        $this->capturing->push($name);
+        ob_start();
+    }
+
+    function endCapture()
+    {
+        $block = $this->capturing->pop();
+
+        if (null === $block) {
+            return;
+        }
+
+        $content = ob_get_clean();
+        $this->setBlock($block, $content);
     }
 
     function block($name)
