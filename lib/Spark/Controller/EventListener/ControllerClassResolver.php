@@ -57,7 +57,7 @@ class ControllerClassResolver implements EventSubscriberInterface
         $moduleName = $request->attributes->get('module');
 
         $route = $this->application['routes']->get($request->attributes->get('_route'));
-        $action = $this->camelize($actionName);
+        $action = $this->camelize($actionName) . "Action";
 
         $controller = $this->getController($controllerName, $moduleName);
 
