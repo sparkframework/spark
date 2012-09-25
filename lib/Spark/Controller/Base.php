@@ -13,17 +13,8 @@ abstract class Base implements ApplicationAware
     use ActionHelper\Layout;
 
     protected $application;
-    protected $response;
-    protected $flash;
-
-    function __construct()
-    {
-        $this->response = new Response;
-        $this->setup();
-    }
-
-    function setup()
-    {}
+    private $response;
+    private $flash;
 
     function render($options = [])
     {
@@ -74,7 +65,7 @@ abstract class Base implements ApplicationAware
 
     function response()
     {
-        return $this->response;
+        return $this->response ?: $this->response = new Response;
     }
 
     function flash()

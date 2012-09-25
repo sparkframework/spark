@@ -75,7 +75,7 @@ class ViewContext
         if (isset($this->context->$property)) {
             if (is_callable($this->context->$property)) {
                 $callback = $this->context->$property;
-                return $callback($this);
+                return $this->context->$property = $callback($this);
             }
 
             return $this->context->$property;
