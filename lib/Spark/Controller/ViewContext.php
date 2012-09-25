@@ -35,13 +35,18 @@ class ViewContext
         return $this;
     }
 
-    function capture($name)
+    function contentFor($name, callable $block = null)
     {
         $this->capturing->push($name);
         ob_start();
+
+        if ($block !== null) {
+            $block();
+            $this->endContentFor();
+        }
     }
 
-    function endCapture()
+    function endContentFor()
     {
         $block = $this->capturing->pop();
 
