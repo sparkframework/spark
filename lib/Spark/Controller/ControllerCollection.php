@@ -30,11 +30,17 @@ class ControllerCollection extends \Silex\ControllerCollection
         $this->put("/$resourceName/{id}", "$resourceName#update")
              ->bind("{$resourceName}_update");
 
-        $this->delete("/$resourceName/{id}", "$resourceName#delete")
-             ->bind("{$resourceName}_delete");
+        $this->delete("/$resourceName/{id}", "$resourceName#destroy")
+             ->bind("{$resourceName}_destroy");
     }
 
     function resource($resourceName)
     {
+        $this->get("/$resourceName", "$resourceName#show");
+        $this->get("/$resourceName/new", "$resourceName#new");
+        $this->get("/$resourceName/edit", "$resourceName#edit");
+        $this->post("/$resourceName", "$resourceName#create");
+        $this->put("/$resourceName", "$resourceName#update");
+        $this->delete("/$resourceName", "$resourceName#destroy");
     }
 }
