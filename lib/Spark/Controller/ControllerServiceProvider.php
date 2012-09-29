@@ -66,6 +66,8 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
                 return json_encode($viewContext->options['json'], $flags);
             });
 
+            $render->scriptPath->appendExtensions(\MetaTemplate\Template::getEngines()->getEngineExtensions());
+
             $render->addFallback(function($viewContext) {
                 if (empty($viewContext->script)) return;
 
