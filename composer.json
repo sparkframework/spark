@@ -1,6 +1,6 @@
 {
     "name": "spark/spark",
-    "description": "The totally awesome framework.",
+    "description": "A classy web framework for rapid development",
     "authors": [
         {
             "name": "Christoph Hochstrasser",
@@ -14,11 +14,12 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "chh/sirel": "*@dev",
         "silex/silex": "*@dev",
-        "chh/pipe-silex": "*@dev",
         "twig/twig": "*@stable",
         "symfony/class-loader": "*@stable",
+        "symfony/process": "*",
+        "chh/sirel": "*@dev",
+        "chh/pipe-silex": "*@dev",
         "chh/fileutils": "*@dev",
         "chh/meta-template": "*@dev"
     },
