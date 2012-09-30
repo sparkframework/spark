@@ -3,6 +3,7 @@
 namespace Spark\Core;
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\Console;
 
 use Silex\Application;
 use Silex\Provider\SessionServiceProvider;
@@ -36,6 +37,16 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             ]);
 
             return $loader;
+        });
+
+        $app['console'] = $app->share(function($app) {
+            $console = new Console\Application;
+
+            @$console->add(new Command\CreateApplication);
+            @$console->add(new Command\Generate($app));
+            @$console->add(new Command\Server($app));
+
+            return $console;
         });
 
         $app->register(new PipeServiceProvider, [

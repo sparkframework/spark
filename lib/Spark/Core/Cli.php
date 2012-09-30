@@ -11,29 +11,35 @@ class Cli
 
     function __construct()
     {
-        $this->console = new Console\Application;
-        $this->console->add(new Command\CreateApplication);
-
         if ($bootstrap = $this->findApplicationBootstrap()) {
-            $this->application = require($bootstrap);
+            if (!isset($_SERVER['SPARK_ENV'])) $_SERVER['SPARK_ENV'] = 'development';
 
-            $this->console->add(new Command\Generate($this->application));
+            $this->application = require($bootstrap);
+        } else {
+            $this->application = new \Spark\Application;
         }
+
+        $this->console = $this->application['console'];
     }
 
     function run()
     {
-        $this->application->run();
+        $this->console->run();
     }
 
     protected function findApplicationBootstrap()
     {
         $path = "config/bootstrap.php";
+        $cwd = getcwd();
 
-        while (!realpath("../$path")) {
-            $path = "../$path";
+        while (!$rp = realpath("$cwd/$path")) {
+            $cwd .= '/..';
+
+            if (realpath($cwd) === false) {
+                break;
+            }
         }
 
-        return $path;
+        return $rp;
     }
 }

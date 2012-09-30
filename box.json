@@ -1,0 +1,10 @@
+{
+    "directories": [
+        "lib/",
+        "vendor/"
+    ],
+    "main": "bin/spark",
+    "output": "spark.phar",
+    "chmod": "0755",
+    "stub": true
+}

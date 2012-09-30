@@ -12,6 +12,7 @@
     "keywords": [
         "framework", "mvc"
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
         "silex/silex": "*@dev",
@@ -29,5 +30,5 @@
             "Spark": "lib\/"
         }
     },
-    "bin": ["bin/spark"]
+    "bin": ["bin/spark.php"]
 }
