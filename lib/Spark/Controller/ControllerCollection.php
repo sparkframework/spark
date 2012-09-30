@@ -6,10 +6,6 @@ class ControllerCollection extends \Silex\ControllerCollection
 {
     function draw(callable $callback)
     {
-        if ($callback instanceof \Closure) {
-            $callback = $callback->bindTo($this);
-        }
-
         $callback($this);
         return $this;
     }

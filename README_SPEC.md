@@ -2,9 +2,9 @@
 
 ## Getting started
 
-    % spark.phar my_app
+    % wget http://getspark.org/spark.phar
+    % spark.phar app my_app
     Creating new application 'my_app'...
-    Done.
     % cd my_app
     % spark.phar server
     PHP Development Server started on port 8080.

@@ -18,6 +18,7 @@
         "twig/twig": "*@stable",
         "symfony/class-loader": "*@stable",
         "symfony/process": "*",
+        "symfony/console": "*",
         "chh/sirel": "*@dev",
         "chh/pipe-silex": "*@dev",
         "chh/fileutils": "*@dev",

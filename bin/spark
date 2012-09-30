@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+function require_one_of(array $files)
+{
+    foreach ($files as $file) {
+        if (is_file($file)) {
+            require_once($file);
+        }
+    }
+}
+
+require_one_of([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php']);
+
+$cli = new \Spark\Core\Cli;
+$cli->run();
+
