@@ -23,7 +23,8 @@
         "chh/sirel": "*@dev",
         "chh/pipe-silex": "*@dev",
         "chh/fileutils": "*@dev",
-        "chh/meta-template": "*@dev"
+        "chh/meta-template": "*@dev",
+        "jsonbuilder/jsonbuilder": "*"
     },
     "autoload": {
         "psr-0": {

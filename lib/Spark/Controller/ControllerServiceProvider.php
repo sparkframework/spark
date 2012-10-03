@@ -79,6 +79,10 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
                     if (is_callable([$template, 'getDefaultContentType']) and !$headers->has('Content-Type')) {
                         $headers->set('Content-Type', $template->getDefaultContentType());
                     }
+
+                    if ($headers->get('Content-Type') !== "text/html") {
+                        $viewContext->parent = null;
+                    }
                 }
 
                 return $template->render($viewContext);
