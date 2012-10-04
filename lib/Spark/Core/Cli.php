@@ -2,8 +2,6 @@
 
 namespace Spark\Core;
 
-use Symfony\Component\Console;
-
 class Cli
 {
     protected $console;

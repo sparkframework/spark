@@ -107,6 +107,8 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
         $app->error(function(\Exception $e, $code) use ($app) {
             $renderPipeline = $app['spark.render_pipeline'];
 
+            # Todo: Log exception to log service.
+
             if ($script = $renderPipeline->scriptPath->find("error/$code")) {
                 $context = (object) [
                     'exception' => $e,

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "spark/spark": "*@dev"
+    },
+    "minimum-stability": "dev"
+}
