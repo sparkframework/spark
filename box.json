@@ -3,6 +3,12 @@
         "lib/",
         "vendor/"
     ],
+    "finder": [
+        {
+            "name": "*",
+            "in": "lib/Spark/Core/Command/templates"
+        }
+    ],
     "main": "bin/spark",
     "output": "spark.phar",
     "chmod": "0755",

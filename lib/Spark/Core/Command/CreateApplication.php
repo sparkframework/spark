@@ -35,8 +35,8 @@ class CreateApplication extends Command
             "$name/app/assets/stylesheets",
             "$name/app/assets/vendor/javascripts",
             "$name/app/assets/vendor/stylesheets",
-            "$name/app/controllers",
-            "$name/app/views",
+            "$name/app/controllers/" . Strings::camelize($name),
+            "$name/app/views/layouts",
             "$name/lib",
             "$name/public"
         ];
@@ -45,6 +45,7 @@ class CreateApplication extends Command
             mkdir($dir, 0755, true);
         }
 
+        file_put_contents("$name/app/views/layouts/default.phtml", $this->template("app/views/layouts/default.phtml"));
         file_put_contents("$name/public/index.php", $this->template("public/index.php"));
         file_put_contents("$name/config/bootstrap.php", $this->template("config/bootstrap.php"));
         file_put_contents("$name/config/routes.php", $this->template("config/routes.php"));

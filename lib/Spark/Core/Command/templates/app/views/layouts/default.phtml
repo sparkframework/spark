@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            <?= $this->block('title') ?>
+        </title>
+    </head>
+    <body>
+        <header role="banner">
+            <h1><a href="/">Welcome to Spark!</a></h1>
+        </header>
+
+        <div id="flash">
+            <?php foreach ($this->flash()->get('notice', []) as $flash): ?>
+            <div class="flash-notice">
+                <?= $flash ?>
+            </div>
+            <?php endforeach ?>
+        </div>
+
+        <section role="main">
+            <?= $this->block('content') ?>
+        </section>
+
+        <footer>
+            <p>Powered by <a href="http://github.com/CHH/spark">Spark Framework</a></p>
+        </footer>
+    </body>
+</html>
+
