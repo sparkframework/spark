@@ -43,7 +43,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $console = new Console\Application;
 
             @$console->add(new Command\CreateApplication);
-            @$console->add(new Command\Generate($app));
+            @$console->add(new Command\GenerateController($app));
             @$console->add(new Command\Server($app));
 
             return $console;

@@ -24,7 +24,8 @@
         "chh/pipe-silex": "*@dev",
         "chh/fileutils": "*@dev",
         "chh/meta-template": "*@dev",
-        "jsonbuilder/jsonbuilder": "*"
+        "jsonbuilder/jsonbuilder": "*",
+        "jms/cg": "*"
     },
     "autoload": {
         "psr-0": {

@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Silex\Application;
 use Spark\Core\ApplicationAware;
+use Spark\Support\Strings;
 
 class ControllerClassResolver implements EventSubscriberInterface
 {
@@ -85,7 +86,7 @@ class ControllerClassResolver implements EventSubscriberInterface
 
     protected function camelize($string)
     {
-        return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
+        return Strings::camelize($string, true);
     }
 
     function getController($name, $module = null)
