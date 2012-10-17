@@ -16,6 +16,22 @@ abstract class Base implements ApplicationAware
     private $response;
     private $flash;
 
+    # Public: Map formats to callback functions.
+    #
+    # Example
+    #
+    #   $this->respondTo([
+    #       'html' => function() {
+    #           return $this->render();
+    #       },
+    #       'json' => function() {
+    #           return $this->render(['json' => $this->model->toArray()]);
+    #       }
+    #   ]);
+    function respondTo(array $spec)
+    {
+    }
+
     function render($options = [])
     {
         $attributes = $this->request()->attributes;
