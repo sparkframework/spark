@@ -39,6 +39,7 @@ class DevelopmentServer
         $process->setTimeout(null);
 
         printf("Running development server on %s:%d ..." . PHP_EOL, $serverName, $port);
+        printf("Stop by pressing [CTRL] + [c]\n");
 
         $process->run(function($type, $err) {
             fwrite(STDERR, "$err\n");
