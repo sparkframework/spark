@@ -2,7 +2,7 @@
 
 namespace Bob\BuildConfig;
 
-task("default", array("test"));
+task("default", array("build"));
 
 desc('Sets up development dependencies');
 task('dev', array('deps', 'composer.json'));
@@ -34,6 +34,17 @@ fileTask("phpunit.xml", array("phpunit.dist.xml"), function($task) {
     copy($task->prerequisites[0], $task->name);
 });
 
-fileTask("composer.json", array("composer.lock", "deps"), function($task) {
+fileTask("composer.lock", array("composer.json", "deps"), function($task) {
     php("composer.phar update --dev");
 });
+
+$libFiles = fileList("*.php")->in("lib/");
+
+fileTask("spark.phar", $libFiles, function($task) {
+    sh("php box.phar build", null, ["fail_on_error" => true]);
+    println("Built PHAR successfully to 'spark.phar'");
+});
+
+desc("Builds the PHAR");
+task("build", ["composer.json", "spark.phar"]);
+
