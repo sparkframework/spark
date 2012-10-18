@@ -25,7 +25,8 @@
         "chh/fileutils": "*@dev",
         "chh/meta-template": "*@dev",
         "jsonbuilder/jsonbuilder": "*",
-        "jms/cg": "*"
+        "jms/cg": "*",
+        'chh/cache-service-provider': "*"
     },
     "autoload": {
         "psr-0": {
