@@ -13,7 +13,6 @@ use Spark\Support\Strings;
 
 class ControllerClassResolver implements EventSubscriberInterface
 {
-    protected $controllerDirectory;
     protected $controllers = [];
     protected $application;
 
@@ -27,10 +26,9 @@ class ControllerClassResolver implements EventSubscriberInterface
         ];
     }
 
-    function __construct(Application $app, $controllerDirectory)
+    function __construct(Application $app)
     {
         $this->application = $app;
-        $this->controllerDirectory = $controllerDirectory;
     }
 
     function onKernelRequest(GetResponseEvent $event)

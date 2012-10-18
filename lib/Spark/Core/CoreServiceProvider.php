@@ -16,14 +16,18 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 {
     function register(Application $app)
     {
-        $app['config'] = $app->share(function($app) {
-            return new ConfigBuilder;
-        });
-
         # Override Silex' controllers factory with our own builder, which features
         # more advanced route building methods, like 'resource'.
         $app["controllers_factory"] = function($app) {
             return new \Spark\Controller\ControllerCollection($app["route_factory"]);
+        };
+
+        $app['config'] = $app->share(function($app) {
+            return new ConfigBuilder;
+        });
+
+        $app['spark.controller_directory'] = function($app) {
+            return "{$app['spark.root']}/app/controllers";
         };
 
         $app["spark.class_loader"] = $app->share(function($app) {
@@ -40,6 +44,21 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
             return $loader;
         });
+
+        $app['spark.view_path'] = function($app) {
+            return [
+                 "{$app['spark.root']}/app/views",
+                 "{$app['spark.root']}/app/views/layouts"
+            ];
+        };
+
+        $app['spark.view_context_class'] = function($app) {
+            return "\\{$app['spark.app.name']}\\ViewContext";
+        };
+
+        $app['spark.default_module'] = function($app) {
+            return $app['spark.app.name'];
+        };
 
         $app['console'] = $app->share(function($app) {
             $console = new Console\Application;

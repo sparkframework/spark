@@ -9,36 +9,16 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
 {
     function register(Application $app)
     {
-        $app["controllers_factory"] = function($app) {
-            return new ControllerCollection($app["route_factory"]);
-        };
-
-        $app['spark.controller_directory'] = function($app) {
-            return "{$app['spark.root']}/app/controllers";
-        };
-
-        $app['spark.view_path'] = function($app) {
-            return [
-                 "{$app['spark.root']}/app/views",
-                 "{$app['spark.root']}/app/views/layouts"
-            ];
-        };
-
         $app['spark.view_context'] = $app->share(function($app) {
-            $class = $app['spark.view_context_class'];
+            $class = isset($app['spark.view_context_class'])
+                ? $app['spark.view_context_class']
+                : '\\Spark\\Controller\\ViewContext';
+
             return new $class($app);
         });
 
-        $app['spark.view_context_class'] = function($app) {
-            return "\\{$app['spark.app.name']}\\ViewContext";
-        };
-
-        $app['spark.default_module'] = function($app) {
-            return $app['spark.app.name'];
-        };
-
         $app['spark.controller_class_resolver'] = $app->share(function($app) {
-            return new EventListener\ControllerClassResolver($app, $app["spark.controller_directory"]);
+            return new EventListener\ControllerClassResolver($app);
         });
 
         $app['spark.render_pipeline'] = $app->share(function($app) {
@@ -107,7 +87,9 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
         $app->error(function(\Exception $e, $code) use ($app) {
             $renderPipeline = $app['spark.render_pipeline'];
 
-            # Todo: Log exception to log service.
+            if (!empty($app['logger'])) {
+                $app['logger']->addError($e);
+            }
 
             if ($script = $renderPipeline->scriptPath->find("error/$code")) {
                 $context = (object) [
