@@ -51,6 +51,9 @@ class CreateApplication extends Command
             mkdir($dir, 0755, true);
         }
 
+        # Create a world writeable data directory for file caching.
+        mkdir("data", 0777, true);
+
         file_put_contents("app/controllers/$appName/IndexController.php", $this->template("app/controllers/IndexController.php", [
             'AppName' => $appName
         ]));
@@ -61,11 +64,14 @@ class CreateApplication extends Command
         file_put_contents("public/index.php", $this->template("public/index.php"));
         file_put_contents("config/bootstrap.php", $this->template("config/bootstrap.php"));
         file_put_contents("config/routes.php", $this->template("config/routes.php"));
+        file_put_contents("config/pipe.php", $this->template("config/pipe.php"));
         file_put_contents("config/environments/production.php", $this->template("config/environments/production.php"));
         file_put_contents("config/environments/development.php", $this->template("config/environments/development.php"));
 
         file_put_contents("composer.json", $this->template("composer.json"));
         file_put_contents("README.txt", $this->template("README.txt"));
+
+        file_put_contents('.spark_version', \Spark\Application::CURRENT_APP_VERSION);
 
         file_put_contents("config/application.php", $this->template("config/application.php", [
             "AppName" => $appName

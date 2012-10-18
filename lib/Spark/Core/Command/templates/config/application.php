@@ -25,3 +25,6 @@ class ViewContext extends \Spark\Controller\ViewContext
     # Include your custom view helpers here.
 }
 
+# Asset Pipeline configuration
+require __DIR__ . '/pipe.php';
+

@@ -16,11 +16,13 @@ use CG\Generator\PhpClass;
 use CG\Generator\PhpMethod;
 
 use Spark\Support\Strings;
+use Spark\Core\Generator\GeneratorInterface;
 use CHH\FileUtils\Path;
 
 class GenerateController extends Command
 {
     protected $application;
+    protected $generators = [];
 
     function __construct(Application $app)
     {
@@ -32,8 +34,8 @@ class GenerateController extends Command
     {
         $this->setName('generate:controller')
             ->setDescription('Generates Controllers')
-            ->addArgument('name', InputArgument::REQUIRED, 'Controller Name')
-            ->addArgument('options', InputArgument::OPTIONAL, 'Generator options as key:value');
+            ->addArgument('name', InputArgument::REQUIRED, 'Artifact Name')
+            ->addArgument('options', InputArgument::OPTIONAL, 'Options as colon value pairs');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -70,9 +72,8 @@ class GenerateController extends Command
         );
 
         $visitor = new DefaultVisitor;
-        $navigator = new DefaultNavigator;
 
-        $navigator->accept($visitor, $class);
+        (new DefaultNavigator)->accept($visitor, $class);
 
         file_put_contents($fileName, "<?php\n\n" . $visitor->getContent());
 

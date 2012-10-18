@@ -11,6 +11,7 @@ class Bootstrap
         $app = new Application;
         $app['spark.env'] = $environment;
         $app['spark.root'] = $root;
+        $app['spark.data_dir'] = "$root/data";
 
         $configFiles = [
             "$root/config/application.php",
