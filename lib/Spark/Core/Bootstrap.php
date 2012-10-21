@@ -6,12 +6,19 @@ use Spark\Application;
 
 class Bootstrap
 {
+    # Runs before all configuration is done.
+    static function start(Application $app){}
+
+    # Runs after all configuration is done, before run() is called.
+    static function end(Application $app){}
+
     static function bootstrap($root, $environment)
     {
         $app = new Application;
         $app['spark.env'] = $environment;
         $app['spark.root'] = $root;
-        $app['spark.data_dir'] = "$root/data";
+
+        static::start($app);
 
         $configFiles = [
             "$root/config/application.php",
@@ -24,6 +31,8 @@ class Bootstrap
                 require_once($config);
             }
         }
+
+        static::end($app);
 
         return $app;
     }
