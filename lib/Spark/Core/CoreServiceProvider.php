@@ -68,11 +68,18 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return $app['spark.app.name'];
         };
 
+        $app['spark.generators'] = $app->share(function($app) {
+            $generators = new Command\Generate($app);
+            $generators->register('controller', new Generator\ControllerGenerator);
+
+            return $generators;
+        });
+
         $app['console'] = $app->share(function($app) {
             $console = new Console\Application;
 
             $console->add(new Command\CreateApplication);
-            $console->add(new Command\GenerateController($app));
+            $console->add($app['spark.generators']);
             $console->add(new Command\Server($app));
 
             return $console;
