@@ -5,6 +5,8 @@ namespace Spark\Controller;
 use Silex\Application;
 use Silex\Provider\TwigServiceProvider;
 
+use Spark\Support\Strings;
+
 class ControllerServiceProvider implements \Silex\ServiceProviderInterface
 {
     function register(Application $app)
@@ -18,7 +20,11 @@ class ControllerServiceProvider implements \Silex\ServiceProviderInterface
         });
 
         $app['spark.controller_class_resolver'] = $app->share(function($app) {
-            return new EventListener\ControllerClassResolver($app);
+            $resolver = new EventListener\ControllerClassResolver($app);
+            $resolver->setDefaultModule($app['spark.default_module']);
+            $resolver->registerModule($app['spark.default_module'], Strings::camelize($app['spark.app.name']));
+
+            return $resolver;
         });
 
         $app['spark.render_pipeline'] = $app->share(function($app) {

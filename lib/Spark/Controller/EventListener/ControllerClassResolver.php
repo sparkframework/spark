@@ -15,6 +15,8 @@ class ControllerClassResolver implements EventSubscriberInterface
 {
     protected $controllers = [];
     protected $application;
+    protected $modules = [];
+    protected $defaultModule;
 
     static function getSubscribedEvents()
     {
@@ -29,6 +31,17 @@ class ControllerClassResolver implements EventSubscriberInterface
     function __construct(Application $app)
     {
         $this->application = $app;
+    }
+
+    function registerModule($module, $namespace)
+    {
+        $this->modules[$module] = $namespace;
+        return $this;
+    }
+
+    function setDefaultModule($module)
+    {
+        $this->defaultModule = $module;
     }
 
     function onKernelRequest(GetResponseEvent $event)
@@ -53,7 +66,7 @@ class ControllerClassResolver implements EventSubscriberInterface
             $actionName = $request->attributes->get('action');
         }
 
-        $moduleName = $request->attributes->get('module');
+        $moduleName = $request->attributes->get('module', $this->defaultModule);
 
         $route = $this->application['routes']->get($request->attributes->get('_route'));
         $action = $this->camelize($actionName) . "Action";
@@ -90,13 +103,19 @@ class ControllerClassResolver implements EventSubscriberInterface
     function getController($name, $module = null)
     {
         if (null === $module) {
-            $module = $this->application['spark.default_module'];
+            $module = $this->defaultModule;
         }
+
+        if (!isset($this->modules[$module])) {
+            return;
+        }
+
+        $namespace = $this->modules[$module];
 
         if (class_exists($name)) {
             $class = $name;
         } else {
-            $class = '\\' . $this->camelize($module) . '\\' . $this->camelize($name) . "Controller";
+            $class = rtrim($namespace, '\\') . '\\' . $this->camelize($name) . "Controller";
 
             if (!class_exists($class)) {
                 return;
