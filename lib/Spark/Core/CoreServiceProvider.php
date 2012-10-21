@@ -26,13 +26,17 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return new ConfigBuilder;
         });
 
-        $app['spark.controller_directory'] = function($app) {
-            return "{$app['spark.root']}/app/controllers";
-        };
+        $app['spark.config_directory'] = $app->share(function($app) {
+            return "{$app['spark.root']}/config";
+        });
 
-        $app['spark.data_directory'] = function($app) {
+        $app['spark.controller_directory'] = $app->share(function($app) {
+            return "{$app['spark.root']}/app/controllers";
+        });
+
+        $app['spark.data_directory'] = $app->share(function($app) {
             return "{$app['spark.root']}/data";
-        };
+        });
 
         $app["spark.class_loader"] = $app->share(function($app) {
             $loader = new UniversalClassLoader;
@@ -49,12 +53,12 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return $loader;
         });
 
-        $app['spark.view_path'] = function($app) {
+        $app['spark.view_path'] = $app->share(function($app) {
             return [
                  "{$app['spark.root']}/app/views",
                  "{$app['spark.root']}/app/views/layouts"
             ];
-        };
+        });
 
         $app['spark.view_context_class'] = function($app) {
             return "\\{$app['spark.app.name']}\\ViewContext";
@@ -78,7 +82,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         $app->register(new UrlGeneratorServiceProvider);
 
         $app->register(new PipeServiceProvider, [
-            'pipe.root' => function($app) { return "{$app['spark.root']}/app/assets"; }
+            'pipe.root' => $app->share(function($app) { return "{$app['spark.root']}/app/assets"; })
         ]);
 
         $app->register(new ControllerServiceProvider);
