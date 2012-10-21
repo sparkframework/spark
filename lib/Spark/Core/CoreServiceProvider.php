@@ -30,6 +30,10 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return "{$app['spark.root']}/app/controllers";
         };
 
+        $app['spark.data_directory'] = function($app) {
+            return "{$app['spark.root']}/data";
+        };
+
         $app["spark.class_loader"] = $app->share(function($app) {
             $loader = new UniversalClassLoader;
 
