@@ -16,7 +16,6 @@
     "require": {
         "php": ">=5.4.0",
         "silex/silex": "*@dev",
-        "twig/twig": "1.*@stable",
         "symfony/class-loader": "2.1.*@stable",
         "symfony/process": "2.1.*@stable",
         "symfony/console": "2.1.*@stable",

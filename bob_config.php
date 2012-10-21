@@ -21,7 +21,7 @@ task('deps', function() {
     }
 
     if (!is_file('box.phar')) {
-        sh('curl -s http://kherge.github.com/Box/installer.php | php');
+        sh('curl -s http://box-project.org/installer.php | php');
     }
 });
 
