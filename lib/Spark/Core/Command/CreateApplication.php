@@ -51,31 +51,46 @@ class CreateApplication extends Command
             mkdir($dir, 0755, true);
         }
 
-        # Create a world writeable data directory for file caching.
+        # Create a world writeable data directory for file caching and temporary files.
+        # Available as `spark.data_directory` application variable.
         mkdir("data", 0777, true);
 
-        file_put_contents("app/controllers/$appName/IndexController.php", $this->template("app/controllers/IndexController.php", [
-            'AppName' => $appName
-        ]));
+        # Create a default Controller
+        file_put_contents(
+            "app/controllers/$appName/IndexController.php",
+            $this->template("app/controllers/IndexController.php", ['AppName' => $appName])
+        );
 
         file_put_contents("app/views/index/index.phtml", "<h1>Hello World</h1>");
 
-        file_put_contents("app/views/layouts/default.phtml", $this->template("app/views/layouts/default.phtml"));
-        file_put_contents("public/index.php", $this->template("public/index.php"));
-        file_put_contents("config/bootstrap.php", $this->template("config/bootstrap.php"));
-        file_put_contents("config/routes.php", $this->template("config/routes.php"));
-        file_put_contents("config/pipe.php", $this->template("config/pipe.php"));
-        file_put_contents("config/environments/production.php", $this->template("config/environments/production.php"));
-        file_put_contents("config/environments/development.php", $this->template("config/environments/development.php"));
+        $this->fileFromTemplate("public/index.php");
+        $this->fileFromTemplate("app/views/layouts/default.phtml");
 
-        file_put_contents("composer.json", $this->template("composer.json"));
-        file_put_contents("README.txt", $this->template("README.txt"));
+        $this->fileFromTemplate("config/bootstrap.php");
+        $this->fileFromTemplate("config/routes.php");
+        $this->fileFromTemplate("config/pipe.php");
 
+        # Create Environment specific config files.
+        $this->fileFromTemplate("config/environments/production.php");
+        $this->fileFromTemplate("config/environments/development.php");
+
+        file_put_contents("app/assets/stylesheets/application.css", "");
+        file_put_contents("app/assets/javascripts/application.js", "");
+
+        $this->fileFromTemplate('bob_config.php');
+        $this->fileFromTemplate('composer.json');
+        $this->fileFromTemplate('README.txt');
+
+        # Store the current application skeleton version, for later upgrades using
+        # the `upgrade` command.
         file_put_contents('.spark_version', \Spark\Application::CURRENT_APP_VERSION);
 
-        file_put_contents("config/application.php", $this->template("config/application.php", [
-            "AppName" => $appName
-        ]));
+        $this->fileFromTemplate('config/application.php', ['AppName' => $appName]);
+    }
+
+    protected function fileFromTemplate($file, $variables = [])
+    {
+        file_put_contents($file, $this->template($file, $variables));
     }
 
     protected function template($name, $variables = [])

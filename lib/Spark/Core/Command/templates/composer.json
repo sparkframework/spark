@@ -1,6 +1,9 @@
 {
     "require": {
-        "spark/spark": "*@dev"
+        "spark/spark": "*"
+    },
+    "require-dev": {
+        "chh/bob": "*"
     },
     "minimum-stability": "dev"
 }

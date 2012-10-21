@@ -8,7 +8,7 @@ desc(
     'Precompile assets for deployment'
 );
 task('assets:precompile', function() {
-    global $application;
+    $application = require 'config/bootstrap.php';
 
     $env = $application['pipe']->environment;
     $dumper = new AssetDumper($application['pipe.precompile_directory']);
