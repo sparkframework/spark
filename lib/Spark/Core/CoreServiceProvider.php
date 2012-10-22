@@ -11,6 +11,7 @@ use Silex\Provider\UrlGeneratorServiceProvider;
 
 use Pipe\Silex\PipeServiceProvider;
 use Spark\Controller\ControllerServiceProvider;
+use CHH\Silex\CacheServiceProvider;
 
 class CoreServiceProvider implements \Silex\ServiceProviderInterface
 {
@@ -85,6 +86,8 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return $console;
         });
 
+        $this->setupCacheServiceProvider($app);
+
         $app->register(new SessionServiceProvider);
         $app->register(new UrlGeneratorServiceProvider);
 
@@ -93,6 +96,40 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         ]);
 
         $app->register(new ControllerServiceProvider);
+    }
+
+    protected function setupCacheServiceProvider($app)
+    {
+        $driver = null;
+
+        switch (true) {
+        case extension_loaded('apc'):
+            $driver = "apc";
+            break;
+        case extension_loaded('xcache'):
+            $driver = "xcache";
+            break;
+        case function_exists('zend_shm_cache_fetch'):
+            $driver = "zend_data";
+            break;
+        }
+
+        $app['cache.options'] = $app->share(function() use ($app, $driver) {
+            $caches = [];
+
+            if ($driver) {
+                $caches['default'] = array('driver' => $driver);
+            }
+
+            $caches['file'] = [
+                'driver' => 'filesystem',
+                'directory' => $app['spark.data_directory']
+            ];
+
+            return $caches;
+        });
+
+        $app->register(new CacheServiceProvider);
     }
 
     function boot(Application $app)
