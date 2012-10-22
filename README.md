@@ -2,7 +2,15 @@
 
 ## Quick Reference
 
-_This is the stuff that already works_
+### Create an Application
+
+First get the `spark` executable:
+
+    % wget http://chh.github.com/spark/spark.phar
+
+Then invoke the `create` command:
+
+    % php spark.phar create MyApp
 
 ### Controllers
 

@@ -1,12 +1,14 @@
 {
-    "directories": [
-        "lib/",
-        "vendor/"
-    ],
     "finder": [
         {
             "name": "*",
-            "in": "lib/Spark/Core/Command/templates"
+            "in": ["lib/", "vendor/"]
+        }
+    ],
+    "finder-bin": [
+        {
+            "name": "*",
+            "in": "res/"
         }
     ],
     "main": "bin/spark",

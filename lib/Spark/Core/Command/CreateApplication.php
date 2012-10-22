@@ -24,14 +24,14 @@ class CreateApplication extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('application_name');
-        $appName = Strings::camelize($name);
+        $appName = Strings::camelize(basename($name), true);
 
         if (is_dir($name)) {
             $output->writeln("<error>Application '$name' already exists</error>");
             return 1;
         }
 
-        mkdir($name, 0755);
+        mkdir($name, 0755, true);
         chdir($name);
 
         $directories = [
@@ -86,6 +86,21 @@ class CreateApplication extends Command
         file_put_contents('.spark_version', \Spark\Application::CURRENT_APP_VERSION);
 
         $this->fileFromTemplate('config/application.php', ['AppName' => $appName]);
+
+        $output->writeln("Downloading Composer...");
+        $this->downloadComposer();
+
+        passthru('php composer.phar install');
+
+        $output->writeln("<info>Successfully created application $appName in " . getcwd() . "</info>");
+    }
+
+    protected function downloadComposer()
+    {
+        $composer = fopen("http://getcomposer.org/composer.phar", "rb");
+        $out = fopen('composer.phar', 'w+');
+
+        stream_copy_to_stream($composer, $out);
     }
 
     protected function fileFromTemplate($file, $variables = [])
@@ -99,7 +114,9 @@ class CreateApplication extends Command
             return "__{$var}__";
         }, array_keys($variables));
 
-        $template = file_get_contents(__DIR__ . "/templates/$name");
+        $templateDir = realpath(__DIR__ . '/../../../../res');
+
+        $template = file_get_contents("$templateDir/templates/$name");
         $template = str_replace($replace, array_values($variables), $template);
 
         return $template;
