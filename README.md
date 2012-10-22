@@ -10,6 +10,17 @@ Spark is a framework for people who believe:
 * Asset management should be shipped out of the box.
 * ORMs solve 80% of problems.
 
+Building a framework is of course a _huge_ project, so there isn't
+nearly all done. This is what works for now:
+
+* Application generator.
+* Asset Pipeline based on [Pipe](http://github.com/CHH/pipe), with
+  deployment support.
+* Action Controllers with Action and View Helpers built on Traits, and
+  support for multiple templating strategies.
+* Basic framework for generators.
+* Extensible command line utility based on Symfony Console.
+
 [Silex]: http://silex.sensiolabs.org
 
 ## Quick Start

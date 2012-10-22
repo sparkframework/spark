@@ -90,7 +90,7 @@ class CreateApplication extends Command
         $output->writeln("Downloading Composer...");
         $this->downloadComposer();
 
-        passthru('php composer.phar install');
+        passthru('php composer.phar install --dev');
 
         $output->writeln("<info>Successfully created application $appName in " . getcwd() . "</info>");
     }
