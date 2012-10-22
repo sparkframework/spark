@@ -100,22 +100,21 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
     protected function setupCacheServiceProvider($app)
     {
-        $driver = null;
-
-        switch (true) {
-        case extension_loaded('apc'):
-            $driver = "apc";
-            break;
-        case extension_loaded('xcache'):
-            $driver = "xcache";
-            break;
-        case function_exists('zend_shm_cache_fetch'):
-            $driver = "zend_data";
-            break;
-        }
-
-        $app['cache.options'] = $app->share(function() use ($app, $driver) {
+        $app['cache.options'] = $app->share(function() use ($app) {
             $caches = [];
+            $driver = null;
+
+            switch (true) {
+            case extension_loaded('apc'):
+                $driver = "apc";
+                break;
+            case extension_loaded('xcache'):
+                $driver = "xcache";
+                break;
+            case function_exists('zend_shm_cache_fetch'):
+                $driver = "zend_data";
+                break;
+            }
 
             if ($driver) {
                 $caches['default'] = array('driver' => $driver);
