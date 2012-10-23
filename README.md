@@ -92,7 +92,7 @@ namespace MyApp;
 
 class UserController
 {
-    function index($name)
+    function indexAction($name)
     {
         $this->name = $name;
     }
