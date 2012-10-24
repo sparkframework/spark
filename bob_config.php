@@ -25,6 +25,10 @@ task('deps', function() {
     }
 });
 
+task('clean', function() {
+    unlink("spark.phar");
+});
+
 desc("Runs all tests.");
 task("test", array("deps", "phpunit.xml", "composer.json"), function() {
     sh("phpunit");

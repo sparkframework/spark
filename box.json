@@ -1,14 +1,15 @@
 {
     "finder": [
         {
-            "name": "*",
-            "in": ["lib/", "vendor/"]
+            "name": "*.php",
+            "exclude": ["Tests", "tests", "test-suite"],
+            "in": ["lib", "vendor"]
         }
     ],
+    "files-bin": ["LICENSE.txt"],
     "finder-bin": [
         {
-            "name": "*",
-            "in": "res/"
+            "in": ["res"]
         }
     ],
     "main": "bin/spark",

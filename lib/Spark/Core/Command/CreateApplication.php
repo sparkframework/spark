@@ -31,6 +31,8 @@ class CreateApplication extends Command
             return 1;
         }
 
+        $output->writeln("Creating application <info>$appName</info>...");
+
         mkdir($name, 0755, true);
         chdir($name);
 
@@ -114,7 +116,11 @@ class CreateApplication extends Command
             return "__{$var}__";
         }, array_keys($variables));
 
-        $templateDir = realpath(__DIR__ . '/../../../../res');
+        $templateDir = __DIR__ . '/../../../../res';
+
+        if (!is_file("$templateDir/templates/$name")) {
+            throw new \InvalidArgumentException("Template '$name' not found.");
+        }
 
         $template = file_get_contents("$templateDir/templates/$name");
         $template = str_replace($replace, array_values($variables), $template);
