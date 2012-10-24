@@ -16,7 +16,7 @@ class ControllerClassResolver implements EventSubscriberInterface
     protected $controllers = [];
     protected $application;
     protected $modules = [];
-    protected $defaultModule;
+    protected $defaultModule = "default";
 
     static function getSubscribedEvents()
     {

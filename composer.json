@@ -27,6 +27,9 @@
         "jms/cg": "*",
         "chh/cache-service-provider": "*"
     },
+    "require-dev": {
+        "symfony/browser-kit": "*"
+    },
     "autoload": {
         "psr-0": {
             "Spark": "lib\/"

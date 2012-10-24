@@ -15,13 +15,37 @@ class RenderPipeline
     ];
 
     public $layout;
+
+    /** Enable/Disable layout rendering */
     public $renderLayout = true;
+
+    /**
+     * @var PathStack
+     */
     public $scriptPath;
 
+    /**
+     * View Context Prototype
+     */
     protected $defaultContext;
+
+    /**
+     * Handler by content type
+     */
     protected $contentTypeHandlers = [];
+
+    /**
+     * Handlers which are invoked when the content type has no 
+     * registered handler.
+     */
     protected $fallbackHandlers = [];
 
+    /**
+     * Constructor
+     *
+     * @param ViewContext $defaultContext
+     * @param array $scriptPath Array of lookup paths for view scripts
+     */
     function __construct(ViewContext $defaultContext, $scriptPath = null)
     {
         $this->scriptPath = new PathStack();
@@ -38,6 +62,15 @@ class RenderPipeline
         $this->layout->script = "default";
     }
 
+    /**
+     * Adds a format handler
+     *
+     * @param string $contentType
+     * @param callable $handler Handler to call when this content type
+     * gets rendered.
+     *
+     * @return RenderPipeline
+     */
     function addFormat($contentType, callable $handler)
     {
         if (!isset($this->contentTypeHandlers[$contentType])) {
@@ -58,6 +91,8 @@ class RenderPipeline
     {
         $format = $context->format;
         $handlers = [];
+
+        $scriptPath = clone $this->scriptPath;
 
         if ($context->script) {
             $context->script = $this->scriptPath->find($context->script);

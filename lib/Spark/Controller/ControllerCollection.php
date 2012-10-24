@@ -10,6 +10,24 @@ class ControllerCollection extends \Silex\ControllerCollection
         return $this;
     }
 
+    /**
+     * Define resource routes for a plural resource.
+     *
+     * This defines the following routes, for the resource 'posts':
+     *
+     * GET /posts           | posts#index
+     * GET /posts/new       | posts#new
+     * GET /posts/{id}      | posts#show
+     * GET /posts/{id}/edit | posts#edit
+     * POST /posts          | posts#create
+     * PUT /posts/{id}      | posts#update
+     * DELETE /posts/{id}   | posts#delete
+     *
+     * @param string $resourceName
+     * @param array $options
+     *
+     * @return ControllerCollection
+     */
     function resources($resourceName, $options = [])
     {
         $controller = @$options['controller'] ?: $resourceName;
@@ -34,8 +52,28 @@ class ControllerCollection extends \Silex\ControllerCollection
 
         $this->delete("/$resourceName/{id}", "$controller#destroy")
              ->bind("{$resourceName}_destroy");
+
+        return $this;
     }
 
+    /**
+     * Define resource routes for a singular resource (a resource where
+     * there can be only one of it)
+     *
+     * This defines the following routes for a resource "profile":
+     *
+     * GET /profile      | profile#show
+     * GET /profile/new  | profile#new
+     * GET /profile/edit | profile#edit
+     * POST /profile     | profile#create
+     * PUT /profile      | profile#update
+     * DELETE /profile   | profile#delete
+     *
+     * @param string $resourceName
+     * @param array $options
+     *
+     * @return ControllerCollection
+     */
     function resource($resourceName, $options = [])
     {
         $controller = @$options['controller'] ?: $resourceName;
@@ -46,5 +84,8 @@ class ControllerCollection extends \Silex\ControllerCollection
         $this->post("/$resourceName", "$controller#create");
         $this->put("/$resourceName", "$controller#update");
         $this->delete("/$resourceName", "$controller#destroy");
+
+        return $this;
     }
 }
+

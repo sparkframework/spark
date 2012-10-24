@@ -9,6 +9,7 @@ class ViewContext
     use ViewHelper\Assets;
     use ViewHelper\Flash;
     use ViewHelper\Uri;
+    use ViewHelper\Render;
 
     public $format = "html";
     public $context;
@@ -92,14 +93,5 @@ class ViewContext
             'Call to undefined method %s::%s()', get_called_class(), $method
         ));
     }
-
-    function __toString()
-    {
-        try {
-            return $this->render();
-        } catch (\Exception $e) {
-            # Ignore
-            # TODO: Log exception
-        }
-    }
 }
+

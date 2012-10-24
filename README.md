@@ -119,7 +119,7 @@ This is done with `$controller#$action`. Controller names are converted
 from `under_score` to `UnderScore` and then suffixed with `Controller`.
 So `user` gets transformed to `UserController`.
 
-If you open <http://localhost:3000/John%20Doe> in your browser you
+If you open <http://localhost:3000/user/John%20Doe> in your browser you
 should see "Hello World John Doe!" in big letters.
 
 ## License

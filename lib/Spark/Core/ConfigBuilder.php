@@ -2,7 +2,7 @@
 
 namespace Spark\Core;
 
-use Spark\Application;
+use Silex\Application;
 
 class ConfigBuilder extends \Pimple
 {
@@ -17,7 +17,7 @@ class ConfigBuilder extends \Pimple
     function with(callable $block)
     {
         if ($block instanceof \Closure) {
-            $block = $block->bindTo($this);
+            $block = $block->bindTo($this, $this);
         }
 
         return $block($this);
