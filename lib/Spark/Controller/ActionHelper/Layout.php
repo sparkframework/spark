@@ -4,6 +4,11 @@ namespace Spark\Controller\ActionHelper;
 
 trait Layout
 {
+    /**
+     * Set layout options
+     *
+     * @param array $options
+     */
     function layout($options = [])
     {
         $renderPipeline = $this->application['spark.render_pipeline'];

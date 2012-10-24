@@ -35,7 +35,7 @@ class RenderPipeline
     protected $contentTypeHandlers = [];
 
     /**
-     * Handlers which are invoked when the content type has no 
+     * Handlers which are invoked when the content type has no
      * registered handler.
      */
     protected $fallbackHandlers = [];
