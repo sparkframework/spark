@@ -13,6 +13,7 @@ abstract class Base implements ApplicationAware
     use ActionHelper\Layout;
 
     protected $application;
+
     private $response;
     private $flash;
 
@@ -30,6 +31,25 @@ abstract class Base implements ApplicationAware
     #   ]);
     function respondTo(array $spec)
     {
+        $request = $this->request();
+
+        # Allow format override via a special '_format' request parameter
+        if ($formatOverride = $request->getRequestFormat(null)) {
+            if (isset($spec[$formatOverride])) {
+                return $spec[$formatOverride]();
+            }
+        }
+
+        # Find the best match for the requested formats in the defined format handlers
+        foreach ($request->getAcceptableContentTypes() as $contentType) {
+            $format = $request->getFormat($contentType);
+
+            if (isset($spec[$format])) {
+                return $spec[$format]();
+            }
+        }
+
+        $this->notFound();
     }
 
     function render($options = [])
