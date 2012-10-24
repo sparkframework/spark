@@ -48,3 +48,20 @@ fileTask("spark.phar", $libFiles, function($task) {
 desc("Builds the PHAR");
 task("build", ["composer.json", "spark.phar"]);
 
+task('gh-pages', ['build'], function() {
+    $temp = 'spark_ghpages_clone_' . uniqid();
+    $phar = realpath('spark.phar');
+
+    cd(sys_get_temp_dir(), function() use ($phar, $temp) {
+        sh(['git', 'clone', '--branch', 'gh-pages', 'git@github.com:CHH/spark', sys_get_temp_dir() . "/$temp"]);
+        chdir($temp);
+
+        copy($phar, "spark.phar");
+
+        sh('git add spark.phar');
+        sh('git commit -m "Update spark.phar"');
+
+        sh('git push git@github.com:CHH/spark gh-pages');
+    });
+});
+
