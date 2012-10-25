@@ -7,7 +7,7 @@ class TestModel extends \Spark\Model\Base
 
 class ModelTest extends \PHPUnit_Framework_TestCase
 {
-    function testEmitsNewInstance()
+    function testEmitsNewInstanceEvent()
     {
         $called = false;
 
@@ -20,5 +20,12 @@ class ModelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($called);
     }
 
-    function 
+    function testRegisterBehaviorCallsRegisterMethodOnce()
+    {
+        $behavior = $this->getMock('\\Spark\\Model\\BehaviorInterface');
+        $behavior->expects($this->once())
+            ->method('register');
+
+        TestModel::register($behavior);
+    }
 }

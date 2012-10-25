@@ -15,7 +15,7 @@ abstract class Base
 
     static function register(BehaviorInterface $behavior)
     {
-        $this->behaviors[] = $behavior;
+        static::$behaviors[] = $behavior;
         $behavior->register(get_called_class(), static::events());
     }
 
