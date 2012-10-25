@@ -52,6 +52,7 @@ fileTask("spark.phar", $libFiles, function($task) {
 desc("Builds the PHAR");
 task("build", ["composer.json", "spark.phar"]);
 
+desc('Builds the PHAR and puts it onto the Github page');
 task('gh-pages', ['build'], function() {
     $temp = 'spark_ghpages_clone_' . uniqid();
     $phar = realpath('spark.phar');

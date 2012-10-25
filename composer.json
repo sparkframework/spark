@@ -19,12 +19,14 @@
         "symfony/class-loader": "2.1.*@stable",
         "symfony/process": "2.1.*@stable",
         "symfony/console": "2.1.*@stable",
+        "symfony/validator": "2.1.*@stable",
         "chh/sirel": "*@dev",
         "chh/pipe-silex": "*@dev",
         "chh/fileutils": "*@dev",
         "chh/meta-template": "*@dev",
         "jsonbuilder/jsonbuilder": "*",
         "jms/cg": "*",
+        "evenement/evenement": "dev-master",
         "chh/cache-service-provider": "*"
     },
     "require-dev": {
