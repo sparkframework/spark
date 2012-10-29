@@ -22,7 +22,7 @@ class QueueWorker extends Command
     {
         $this->setName('queue:worker')
             ->setDescription('Runs a single queue worker')
-            ->addOption('require', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY)
+            ->addOption('require', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'File(s) to require before accepting jobs')
             ->addArgument('socket', InputArgument::OPTIONAL, 'Socket for the server to listen on (default: tcp://0.0.0.0:9999');
     }
 
