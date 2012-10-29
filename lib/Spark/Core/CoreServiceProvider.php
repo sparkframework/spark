@@ -11,6 +11,8 @@ use Silex\Provider\UrlGeneratorServiceProvider;
 
 use Pipe\Silex\PipeServiceProvider;
 use Spark\Controller\ControllerServiceProvider;
+use Spark\Queue\SocketQueue;
+
 use CHH\Silex\CacheServiceProvider;
 
 class CoreServiceProvider implements \Silex\ServiceProviderInterface
@@ -82,8 +84,15 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $console->add(new Command\CreateApplication);
             $console->add($app['spark.generators']);
             $console->add(new Command\Server($app));
+            $console->add(new Command\QueueWorker($app));
 
             return $console;
+        });
+
+        $app['queue.socket'] = "tcp://0.0.0.0:9999";
+
+        $app['queue'] = $app->share(function($app) {
+            return new SocketQueue($app['queue.socket']);
         });
 
         $this->setupCacheServiceProvider($app);
