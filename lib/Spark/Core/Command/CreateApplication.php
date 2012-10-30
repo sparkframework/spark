@@ -85,7 +85,8 @@ class CreateApplication extends Command
 
         # Store the current application skeleton version, for later upgrades using
         # the `upgrade` command.
-        file_put_contents('.spark_version', \Spark\Application::CURRENT_APP_VERSION);
+        file_put_contents('.spark_version', \Spark\Spark::VERSION);
+        file_put_contents('.app_version', \Spark\Spark::SKELETON_VERSION);
 
         $this->fileFromTemplate('config/application.php', ['AppName' => $appName]);
 
