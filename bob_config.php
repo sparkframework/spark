@@ -89,5 +89,7 @@ task('release', function() {
     );
 
     sh(sprintf('git commit lib/Spark/Spark.php -m "Update version to %s"', $version));
+
+    task('gh-pages')->invoke();
 });
 
