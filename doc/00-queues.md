@@ -19,7 +19,7 @@ Let's create a job class for our task. A basic class can look like this:
 
 ```php
 <?php
-# lib/MyApp/ConvertJob.php
+# lib/MyApp/HelloWorldJob.php
 
 namespace MyApp;
 
