@@ -80,7 +80,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         });
 
         $app['console'] = $app->share(function($app) {
-            $console = new Console\Application;
+            $console = new Console\Application('spark', \Spark\Spark::VERSION);
 
             $console->add(new Command\CreateApplication);
             $console->add($app['spark.generators']);
