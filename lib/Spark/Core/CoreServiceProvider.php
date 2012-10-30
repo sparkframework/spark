@@ -86,6 +86,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $console->add($app['spark.generators']);
             $console->add(new Command\Server($app));
             $console->add(new Command\QueueWorker($app));
+            $console->add(new Command\Upgrade);
 
             return $console;
         });
