@@ -27,7 +27,8 @@
         "jsonbuilder/jsonbuilder": "*",
         "jms/cg": "*",
         "evenement/evenement": "dev-master",
-        "chh/cache-service-provider": "*"
+        "chh/cache-service-provider": "*",
+        "monolog/monolog": "1.2.*@stable"
     },
     "require-dev": {
         "symfony/browser-kit": "*"

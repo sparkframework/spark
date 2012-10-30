@@ -8,10 +8,11 @@ use Symfony\Component\Console;
 use Silex\Application;
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
+use Silex\Provider\MonologServiceProvider;
 
 use Pipe\Silex\PipeServiceProvider;
 use Spark\Controller\ControllerServiceProvider;
-use Spark\Queue\SocketQueue;
+use Spark\Queue\LocalQueue;
 
 use CHH\Silex\CacheServiceProvider;
 
@@ -89,13 +90,17 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return $console;
         });
 
-        $app['queue.socket'] = "tcp://0.0.0.0:9999";
-
         $app['queue'] = $app->share(function($app) {
-            return new SocketQueue($app['queue.socket']);
+            return new LocalQueue;
         });
 
         $this->setupCacheServiceProvider($app);
+
+        $app->register(new MonologServiceProvider, array(
+            'monolog.logfile' => function() use ($app) {
+                return $app['spark.data_directory'] . '/app.log';
+            }
+        ));
 
         $app->register(new SessionServiceProvider);
         $app->register(new UrlGeneratorServiceProvider);

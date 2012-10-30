@@ -4,17 +4,28 @@ namespace Spark\Core\Command;
 
 use Silex\Application;
 
+use Spark\Core\ApplicationAware;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 class QueueWorker extends Command
 {
+    protected $log;
+
     function __construct(Application $app)
     {
         $this->application = $app;
+
+        $this->log = new Logger('spark/queue:worker');
+        $this->log->pushHandler(new StreamHandler(STDERR));
+
         parent::__construct();
     }
 
@@ -22,8 +33,7 @@ class QueueWorker extends Command
     {
         $this->setName('queue:worker')
             ->setDescription('Runs a single queue worker')
-            ->addOption('require', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'File(s) to require before accepting jobs')
-            ->addArgument('socket', InputArgument::OPTIONAL, 'Socket for the server to listen on (default: tcp://0.0.0.0:9999');
+            ->addOption('require', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'File(s) to require before accepting jobs');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -36,35 +46,37 @@ class QueueWorker extends Command
 
         $this->application['spark.class_loader']->register();
 
-        if (isset($this->application['queue.socket'])) {
-            $socket = $this->application['queue.socket'];
-        } else {
-            $socket = $input->getArgument('socket') ?: "tcp://0.0.0.0:9999";
-        }
+        $queue = $this->application['queue'];
 
-        $server = stream_socket_server($socket, $errno, $errstr);
-
-        if (false === $server) {
-            throw new \InvalidArgumentException(sprintf(
-                'Could not start server: %s', $errstr
-            ));
-        }
-
-        $output->writeln(sprintf('Listening for jobs on <info>%s</info>', $socket));
+        $output->writeln(sprintf('Listening for jobs using %s', get_class($queue)));
         $output->writeln('Stop with [CTRL]+[c]');
 
         for (;;) {
-            $r = [$server];
-            $w = null;
-            $x = null;
+            $job = $queue->pop();
 
-            if (stream_select($r, $w, $x, 0, 500000) > 0 and $r) {
-                $conn = stream_socket_accept($r[0]);
+            if ($job) {
+                $this->log->addInfo(sprintf('Accepted job %s', get_class($job)), ['job' => $job]);
 
-                while ($jobData = fgets($conn)) {
-                    $job = unserialize($jobData);
-                    $job->run();
+                if ($job instanceof ApplicationAware) {
+                    $job->setApplication($this->application);
                 }
+
+                set_error_handler(function($code, $message, $file, $line) use ($job) {
+                    $this->log->addError(
+                        sprintf('Job %s failed: "%s" in file %s:%d', get_class($job), $message, $file, $line),
+                        ['job' => $job]
+                    );
+                });
+
+                try {
+                    $job->run();
+
+                    $this->log->addInfo(sprintf('Job "%s" finished successfully', get_class($job)), ['job' => $job]);
+                } catch (\Exception $e) {
+                    $this->log->addError(sprintf('Job "%s" failed: %s', get_class($job), $e), ['job' => $job]);
+                }
+
+                restore_error_handler();
             }
         }
     }
