@@ -70,3 +70,24 @@ task('gh-pages', ['build'], function() {
     });
 });
 
+desc(
+'Releases a version. Usage: bob release version=<version>'
+);
+task('release', function() {
+    $version = $_ENV['version'];
+
+    sh("git checkout -b release/$version");
+
+    $spark = file_get_contents('lib/Spark/Spark.php');
+
+    file_put_contents(
+        'lib/Spark/Spark.php',
+        preg_replace(
+            '/const VERSION = ".*";/i', sprintf('const VERSION = "%s";', $version),
+            file_get_contents('lib/Spark/Spark.php')
+        )
+    );
+
+    sh(sprintf('git commit lib/Spark/Spark.php -m "Update version to %s"', $version));
+});
+
