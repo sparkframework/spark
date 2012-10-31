@@ -28,7 +28,8 @@
         "jms/cg": "*",
         "evenement/evenement": "dev-master",
         "chh/cache-service-provider": "*",
-        "monolog/monolog": "1.2.*@stable"
+        "monolog/monolog": "1.2.*@stable",
+        "chh/kue": "*@dev"
     },
     "require-dev": {
         "symfony/browser-kit": "*"

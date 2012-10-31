@@ -12,8 +12,7 @@ use Silex\Provider\MonologServiceProvider;
 
 use Pipe\Silex\PipeServiceProvider;
 use Spark\Controller\ControllerServiceProvider;
-use Spark\Queue\LocalQueue;
-
+use Kue\LocalQueue;
 use CHH\Silex\CacheServiceProvider;
 
 class CoreServiceProvider implements \Silex\ServiceProviderInterface
@@ -85,7 +84,12 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $console->add(new Command\CreateApplication);
             $console->add($app['spark.generators']);
             $console->add(new Command\Server($app));
-            $console->add(new Command\QueueWorker($app));
+
+            $queueWorker = new Command\QueueWorker($app['queue']);
+            $queueWorker->setSilexApplication($app);
+
+            $console->add($queueWorker);
+
             $console->add(new Command\Upgrade);
 
             return $console;
