@@ -26,7 +26,7 @@
         "chh/meta-template": "*@dev",
         "jsonbuilder/jsonbuilder": "*",
         "jms/cg": "*",
-        "evenement/evenement": "dev-master",
+        "evenement/evenement": "1.0.*",
         "chh/cache-service-provider": "*",
         "monolog/monolog": "1.2.*@stable",
         "chh/kue": "*@dev"
