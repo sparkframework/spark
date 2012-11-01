@@ -21,14 +21,6 @@ class QueueWorker extends \Kue\Command\Worker
 {
     protected $silexApplication;
 
-    function __construct(Queue $queue)
-    {
-        parent::__construct($queue);
-
-        $this->log = new Logger('spark/queue:worker');
-        $this->log->pushHandler(new StreamHandler(STDERR));
-    }
-
     function setSilexApplication(Application $app)
     {
         $this->silexApplication = $app;
