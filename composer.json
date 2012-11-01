@@ -28,7 +28,7 @@
         "jms/cg": "*",
         "evenement/evenement": "1.0.*",
         "chh/cache-service-provider": "*",
-        "monolog/monolog": "1.2.*@stable",
+        "monolog/monolog": "1.2.*",
         "chh/kue": "*@dev"
     },
     "require-dev": {
