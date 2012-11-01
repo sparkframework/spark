@@ -6,7 +6,6 @@ use Silex\Application;
 
 use Spark\Core\ApplicationAware;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,13 +17,13 @@ use Monolog\Handler\StreamHandler;
 use Kue\Worker;
 use Kue\Queue;
 
-class QueueWorker extends Command
+class QueueWorker extends \Kue\Command\Worker
 {
     protected $silexApplication;
 
     function __construct(Queue $queue)
     {
-        parent::__construct();
+        parent::__construct($queue);
 
         $this->log = new Logger('spark/queue:worker');
         $this->log->pushHandler(new StreamHandler(STDERR));
@@ -40,6 +39,13 @@ class QueueWorker extends Command
         parent::configure();
 
         $this->setName('queue:worker');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->silexApplication->boot();
+
+        return parent::execute($input, $output);
     }
 
     protected function setupWorker(Worker $worker)
