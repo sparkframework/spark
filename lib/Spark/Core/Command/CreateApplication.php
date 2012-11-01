@@ -83,6 +83,12 @@ class CreateApplication extends Command
         $this->fileFromTemplate('composer.json');
         $this->fileFromTemplate('README.txt');
 
+        file_put_contents('.gitignore', join("\n", [
+            "/vendor/",
+            "/public/assets/",
+            "/composer.phar"
+        ]));
+
         # Store the current application skeleton version, for later upgrades using
         # the `upgrade` command.
         file_put_contents('.spark_version', \Spark\Spark::VERSION);
