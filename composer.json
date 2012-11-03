@@ -29,10 +29,9 @@
         "evenement/evenement": "1.0.*",
         "chh/cache-service-provider": "*",
         "monolog/monolog": "1.*@stable",
-        "chh/kue": "*@dev"
-    },
-    "require-dev": {
-        "symfony/browser-kit": "*"
+        "chh/kue": "*@dev",
+        "symfony/browser-kit": "2.1.*@stable",
+        "symfony/css-selector": "2.1.*@stable"
     },
     "autoload": {
         "psr-0": {
