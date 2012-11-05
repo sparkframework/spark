@@ -45,7 +45,7 @@ fileTask("composer.lock", array("composer.json", "deps"), function($task) {
 $libFiles = fileList("*.php")->in("lib/");
 
 fileTask("spark.phar", $libFiles, function($task) {
-    sh("php box.phar build", null, ["fail_on_error" => true]);
+    sh("php box.phar build -v", null, ["fail_on_error" => true]);
     println("Built PHAR successfully to 'spark.phar'");
 });
 

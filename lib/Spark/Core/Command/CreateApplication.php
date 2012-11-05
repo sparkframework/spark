@@ -69,8 +69,14 @@ class CreateApplication extends Command
         file_put_contents("app/views/index/index.phtml", "<h1>Hello World</h1>");
 
         $this->fileFromTemplate("public/index.php");
+        $this->fileFromTemplate("public/.htaccess");
+
+        mkdir('extra', 0755);
+        $this->fileFromTemplate('extra/nginx.conf');
+
         $this->fileFromTemplate("app/views/layouts/default.phtml");
 
+        # Default configuration files:
         $this->fileFromTemplate("config/bootstrap.php");
         $this->fileFromTemplate("config/routes.php");
         $this->fileFromTemplate("config/pipe.php");
@@ -78,12 +84,12 @@ class CreateApplication extends Command
         # Create Environment specific config files.
         $this->fileFromTemplate("config/environments/production.php");
         $this->fileFromTemplate("config/environments/development.php");
+        $this->fileFromTemplate("config/environments/testing.php");
 
         file_put_contents("app/assets/stylesheets/application.css", "");
         file_put_contents("app/assets/javascripts/application.js", "");
 
         $this->fileFromTemplate('tests/bootstrap.php');
-
         $this->fileFromTemplate('phpunit.dist.xml');
 
         $this->fileFromTemplate('bob_config.php');

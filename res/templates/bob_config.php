@@ -9,10 +9,12 @@ copyTask('phpunit.dist.xml', 'phpunit.xml');
 task('test', ['test:unit', 'test:integration']);
 
 task('test:integration', ['phpunit.xml'], function() {
-    sh("phpunit tests/integration");
+    info("Running integration tests...");
+    sh("./vendor/bin/phpunit tests/integration");
 });
 
 task('test:unit', ['phpunit.xml'], function() {
-    sh("phpunit tests/unit");
+    info("Running unit tests...");
+    sh("./vendor/bin/phpunit tests/unit");
 });
 

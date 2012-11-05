@@ -3,7 +3,8 @@
         "spark/spark": "*"
     },
     "require-dev": {
-        "chh/bob": "*"
+        "chh/bob": "*",
+        "phpunit/phpunit": "3.7.*@stable"
     },
     "minimum-stability": "dev"
 }
