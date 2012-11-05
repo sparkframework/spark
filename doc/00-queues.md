@@ -75,17 +75,54 @@ despite the fact that our job needs 20 seconds to run.
 Then look at the console window where you run the `queue:worker`
 command. You should see "Hello World John Doe!".
 
+## Going concurrent
+
+- - -
+Concurrent execution of jobs is only available on __*nix__ platforms,
+like Linux or OSX.
+- - -
+
+One thing you may have noticed is, that the worker only processes one
+job at a time. 
+
+This has some pretty big drawbacks:
+
+* A job gone wrong is able to kill the worker, and there's no automatic
+  respawn of workers.
+* Only one CPU core is used for processing workers.
+
+If you happen to have a \*nix OS and the `pcntl` extension enabled, you
+can use the `-c` flag on the `queue:worker` command and set it to
+something greater than zero to enable the preforking worker.
+
+This spawns four worker processes, allowing it to process four different
+jobs at a time:
+
+    % ./vendor/bin/spark queue:worker -c 4
+
+The preforking worker spawns a pool of _n_ child processes (the number is
+used from the `-c` flag), which each call `pop` on the queue.
+
+The master process then attempts to keep _n_ child processes around,
+starting new ones and killing stale ones as it becomes necessary.
+
 ## Implementing a Queue
 
-Queues all implement the `Spark\Queue\Queue` interface. This interface
+The queuing system is built on top of [Kue][], an abstraction layer on
+top of multiple job queue systems.
+
+[Kue]: https://github.com/CHH/kue
+
+Queues all implement the `Kue\Queue` interface. This interface
 specifies three methods:
 
 * `pop()`, which is done by the worker script (the `queue:worker`
   command), waits until a job is available and then returns it.
 * `push(Job $job)`, this is done in the application and should push the
   job onto some kind of pending jobs list.
-* `flush()`, which sends all jobs to the underlying service and is
-  invoked by Spark after the response was sent to the user.
+* `flush()`, is invoked by Spark after the response was sent to the user. Can be used to send
+  jobs only to the queue at the end of the request, and use more
+  efficient transportation methods, like bulk requests.
 
 To override the queue implementation, set the `queue` service in your
 `config/application.php`:
@@ -96,15 +133,18 @@ $app['queue'] = $app->share(function() use ($app) {
 });
 ```
 
-A simple queue which uses Redis as storage for jobs could look like
-this:
+A simple queue, which uses Redis as storage for jobs, could look like
+this (but see [Kue\\RedisQueue][] if you need this for real):
+
+[Kue\\RedisQueue]: https://github.com/CHH/kue/tree/master/lib/Kue/RedisQueue.php
 
 ```php
 <?php
 
-use Spark\Queue\Job;
+use Kue\Job;
+use Kue\Queue;
 
-class MyRedisQueue implements \Spark\Queue\Queue
+class MyRedisQueue implements Queue
 {
     const QUEUE_KEY = "spark:queue";
 
@@ -118,15 +158,13 @@ class MyRedisQueue implements \Spark\Queue\Queue
 
     function pop()
     {
-        for (;;) {
-            $response = $this->redis->blPop(self::QUEUE_KEY, 10);
+        $response = $this->redis->blPop(self::QUEUE_KEY, 10);
 
-            if ($response) {
-                list($list, $serializedJob) = $response;
+        if ($response) {
+            list($list, $serializedJob) = $response;
 
-                $job = unserialize($serializedJob);
-                return $job;
-            }
+            $job = unserialize($serializedJob);
+            return $job;
         }
     }
 
