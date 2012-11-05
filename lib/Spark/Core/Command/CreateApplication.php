@@ -46,7 +46,10 @@ class CreateApplication extends Command
             "app/views/layouts",
             "app/views/index",
             "lib",
-            "public"
+            "public",
+            "tests/",
+            "tests/integration",
+            "tests/unit"
         ];
 
         foreach ($directories as $dir) {
@@ -78,6 +81,10 @@ class CreateApplication extends Command
 
         file_put_contents("app/assets/stylesheets/application.css", "");
         file_put_contents("app/assets/javascripts/application.js", "");
+
+        $this->fileFromTemplate('tests/bootstrap.php');
+
+        $this->fileFromTemplate('phpunit.dist.xml');
 
         $this->fileFromTemplate('bob_config.php');
         $this->fileFromTemplate('composer.json');

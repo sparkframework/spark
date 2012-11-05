@@ -14,19 +14,26 @@ class Upgrade extends Command
 {
     protected $migrations = [];
 
-    protected function migrate($version, callable $callback)
+    protected function migrate($version, $description, callable $callback)
     {
-        $this->migrations[$version] = $callback;
+        $this->migrations[$version][] = [$description, $callback];
     }
 
     protected function configure()
     {
         $this->setName('upgrade')
-            ->setDescription('Upgrades the application to the latest framework version');
+             ->setDescription('Upgrades the application to the latest framework version');
 
-        $this->migrate(2, function() {
+        $this->migrate(2, "Add 'data' directory", function() {
             is_dir('data') ?: mkdir('data', 0777);
+        });
+
+        $this->migrate(2, "Add 'app/assets/images' directory", function() {
             is_dir('app/assets/images') ?: mkdir('app/assets/images', 0755, true);
+        });
+
+        $this->migrate(3, "Add test build configuration", function() {
+            
         });
     }
 
@@ -34,7 +41,9 @@ class Upgrade extends Command
     {
         $dialog = $this->getHelperSet()->get('dialog');
 
-        if (!$dialog->askConfirmation($output, '<question>Do you really want to upgrade?</question>', false)) {
+        $question = sprintf('<question>Do you really want to upgrade to version %s?</question> (y/n) > ', \Spark\Spark::VERSION);
+
+        if (!$dialog->askConfirmation($output, $question, false)) {
             return;
         }
 
@@ -47,12 +56,16 @@ class Upgrade extends Command
             }
         );
 
-        foreach ($migrations as $v) {
-            $callback = $this->migrations[$v];
-            $callback();
+        foreach ($migrations as $version) {
+            foreach ($this->migrations[$version] as $migration) {
+                list($description, $callback) = $migration;
+
+                $output->writeln("Applying: $description");
+                $callback();
+            }
         }
 
-        file_put_contents('.app_version', $v);
+        file_put_contents('.app_version', \Spark\Spark::SKELETON_VERSION);
         file_put_contents('.spark_version', \Spark\Spark::VERSION);
     }
 }

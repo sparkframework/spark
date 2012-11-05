@@ -5,10 +5,12 @@ the app? Then Spark has covered your back.
 
 Spark features a very simple and generic API for writing background
 jobs. The main building block is the `queue` service. The `queue`
-service features one method, that's of interest: `push`.
+service features one method, that's interesting within the application: `push`.
 
 The `push` method takes one job (a child of `Spark\Core\Job`) and pushes
-it onto the queue.
+it onto the queue. A queue worker then takes the job from the queue by
+calling the `pop` method. When the worker has received a job, it calls
+the `run` method.
 
 ## A Quick Example
 
@@ -34,16 +36,19 @@ class HelloWorldJob extends \Spark\Core\Job
 
     function run()
     {
-        # This thing is really expensive
+        # Simulate something expensive
         sleep(20);
 
-        echo "Hello World {$this->name}!\n";
+        $this->application['logger']->info("Hello World {$this->name}!");
     }
 }
 ```
 
 You can instantiate this class like any other. Just pass all required
 paramaters to the constructor.
+
+You also have automatically access to the application object via the
+job's `application` property.
 
 Do this in your controller:
 
