@@ -6,9 +6,10 @@
             "in": ["lib", "vendor"]
         }
     ],
-    "files-bin": ["LICENSE.txt"],
+    "files-bin": ["LICENSE.txt", "res/templates/public/.htaccess"],
     "finder-bin": [
         {
+            "name": "*",
             "in": ["res"]
         }
     ],
