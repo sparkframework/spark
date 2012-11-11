@@ -153,7 +153,6 @@ class MyRedisQueue implements Queue
 {
     const QUEUE_KEY = "spark:queue";
 
-    protected $pending;
     protected $redis;
 
     function __construct(\Redis $redis)
