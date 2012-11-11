@@ -36,10 +36,6 @@ class Upgrade extends Command
             $templateDir = __DIR__ . '/../../../../res';
             copy("$templateDir/templates/public/.htaccess", "public/.htaccess");
         });
-
-        $this->migrate(3, "Add test build configuration", function() {
-            
-        });
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

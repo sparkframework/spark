@@ -59,6 +59,7 @@ class CreateApplication extends Command
         # Create a world writeable data directory for file caching and temporary files.
         # Available as `spark.data_directory` application variable.
         mkdir("data", 0777, true);
+        file_put_contents('data/.empty', '');
 
         # Create a default Controller
         file_put_contents(
@@ -99,7 +100,8 @@ class CreateApplication extends Command
         file_put_contents('.gitignore', join("\n", [
             "/vendor/",
             "/public/assets/",
-            "/composer.phar"
+            "/composer.phar",
+            "/data/app.log"
         ]));
 
         # Store the current application skeleton version, for later upgrades using
