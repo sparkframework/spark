@@ -42,7 +42,14 @@ trait Redirect
             $url = $this->application['url_generator']->generate($url, $params, false);
         }
 
-        $request = Request::create($url, $method);
-        return $this->application->handle($request, HttpKernelInterface::SUB_REQUEST);
+        $request = $this->application['request'];
+
+        $sub = Request::create($url, $method, array(), $request->cookies->all(), array(), $request->server->all());
+
+        if ($request->getSession()) {
+            $sub->setSession($request->getSession());
+        }
+
+        return $this->application->handle($request, HttpKernelInterface::SUB_REQUEST, false);
     }
 }
