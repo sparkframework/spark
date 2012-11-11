@@ -32,6 +32,11 @@ class Upgrade extends Command
             is_dir('app/assets/images') ?: mkdir('app/assets/images', 0755, true);
         });
 
+        $this->migrate(3, "Add .htaccess", function() {
+            $templateDir = __DIR__ . '/../../../../res';
+            copy("$templateDir/templates/public/.htaccess", "public/.htaccess");
+        });
+
         $this->migrate(3, "Add test build configuration", function() {
             
         });
