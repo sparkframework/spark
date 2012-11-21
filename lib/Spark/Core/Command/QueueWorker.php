@@ -17,7 +17,7 @@ use Monolog\Handler\StreamHandler;
 use Kue\Worker;
 use Kue\Queue;
 
-class QueueWorker extends \Kue\Command\Worker
+class QueueWorker extends \Kue\Command\WorkCommand
 {
     protected $silexApplication;
 
@@ -30,7 +30,7 @@ class QueueWorker extends \Kue\Command\Worker
     {
         parent::configure();
 
-        $this->setName('queue:worker');
+        $this->setName('queue:work');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
