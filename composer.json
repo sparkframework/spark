@@ -29,7 +29,7 @@
         "chh/cache-service-provider": "*",
         "monolog/monolog": "1.*@stable",
         "chh/kue": "*@dev",
-        "symfony/browser-kit": "2.1.*@stable",
+        "symfony/browser-kit": "*",
         "symfony/css-selector": "*"
     },
     "autoload": {
