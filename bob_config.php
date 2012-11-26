@@ -31,7 +31,7 @@ task('clean', function() {
 
 desc("Runs all tests.");
 task("test", array("deps", "phpunit.xml", "composer.json"), function() {
-    sh("phpunit");
+    sh("vendor/bin/phpunit");
 });
 
 fileTask("phpunit.xml", array("phpunit.dist.xml"), function($task) {
@@ -44,25 +44,36 @@ fileTask("composer.lock", array("composer.json", "deps"), function($task) {
 
 $libFiles = fileList("*.php")->in("lib/");
 
-fileTask("spark.phar", $libFiles, function($task) {
+fileTask("_build/spark.phar", $libFiles, function($task) {
     sh("php box.phar build -v", null, ["fail_on_error" => true]);
     println("Built PHAR successfully to 'spark.phar'");
 });
 
+directoryTask('_build');
+
 desc("Builds the PHAR");
-task("build", ["composer.json", "spark.phar"]);
+task("dist", ['_build', "composer.json", "_build/spark.phar"]);
 
 desc('Builds the PHAR and puts it onto the Github page');
-task('gh-pages', ['build'], function() {
+task('gh-pages', ['docs', 'dist'], function() {
     $temp = 'spark_ghpages_clone_' . uniqid();
-    $phar = realpath('spark.phar');
+    $phar = realpath('_build/spark.phar');
+    $api = realpath('_build/api');
 
-    cd(sys_get_temp_dir(), function() use ($phar, $temp) {
+    cd(sys_get_temp_dir(), function() use ($phar, $temp, $api) {
         sh(['git', 'clone', '--branch', 'gh-pages', 'git@github.com:CHH/spark', sys_get_temp_dir() . "/$temp"]);
         chdir($temp);
 
-        copy($phar, "spark.phar");
+        info("Updating API Documentation ...");
 
+        sh('rm -rf api/');
+        sh("cp -R $api ./");
+        sh('git add --all api/');
+        sh('git commit -m "Update API documentatino"');
+
+        info("Updating spark.phar ...");
+
+        copy($phar, "spark.phar");
         sh('git add spark.phar');
         sh('git commit -m "Update spark.phar"');
 
@@ -70,8 +81,13 @@ task('gh-pages', ['build'], function() {
     });
 });
 
+desc('Builds the documentation');
+task('docs', ['_build'], function() {
+    php(['vendor/bin/sami.php', 'update', 'sami_config.php', '-v']);
+});
+
 desc(
-'Releases a version. Usage: bob release version=<version>'
+    'Releases a version. Usage: bob release version=<version>'
 );
 task('release', function() {
     $version = $_ENV['version'];

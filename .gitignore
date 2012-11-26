@@ -1,6 +1,7 @@
-vendor/
+/vendor/
 /phpunit.xml
 /composer.lock
 /composer.phar
 /box.phar
 /spark.phar
+_build/
