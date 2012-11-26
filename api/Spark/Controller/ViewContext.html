@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>Spark\Controller\ViewContext | Spark Framework API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">Spark Framework API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../../Spark/Controller.html">Spark\Controller</a>\ViewContext</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>ViewContext</strong></p>
+
+    
+    
+            <h2>Properties</h2>
+
+            <table>
+                    <tr>
+                <td class="type" id="property_format">
+                                                            
+                </td>
+                <td>$format</td>
+                <td class="last"></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_context">
+                                                            
+                </td>
+                <td>$context</td>
+                <td class="last"></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_options">
+                                                            
+                </td>
+                <td>$options</td>
+                <td class="last"></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_script">
+                                                            
+                </td>
+                <td>$script</td>
+                <td class="last"></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_parent">
+                                                            
+                </td>
+                <td>$parent</td>
+                <td class="last"></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_response">
+                                                            
+                </td>
+                <td>$response</td>
+                <td class="last"></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="#method___construct">__construct</a>(<abbr title="Spark\Controller\Silex\Application">Application</abbr> $app)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <a href="../../Spark/Controller/ViewContext.html"><abbr title="Spark\Controller\ViewContext">ViewContext</abbr></a>
+                </td>
+                <td class="last">
+                    <a href="#method_setBlock">setBlock</a>($block, $content)
+                    <p>Assigns the string to the block.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    void
+                </td>
+                <td class="last">
+                    <a href="#method_contentFor">contentFor</a>($name, <abbr title="Spark\Controller\callable">callable</abbr> $block = null)
+                    <p>Starts capturing content into a block</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    void
+                </td>
+                <td class="last">
+                    <a href="#method_endContentFor">endContentFor</a>()
+                    <p>Stops capturing started with `contentFor()` and saves the  captured content to the block name given to `contentFor()`.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    string
+                </td>
+                <td class="last">
+                    <a href="#method_block">block</a>(string $name)
+                    <p>Returns the content of the block</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="#method_blocks">blocks</a>()
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="#method___get">__get</a>($property)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="#method___call">__call</a>($method, $argv)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 30</div>
+        <code>            public            
+    <strong>__construct</strong>(<abbr title="Spark\Controller\Silex\Application">Application</abbr> $app)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><abbr title="Spark\Controller\Silex\Application">Application</abbr></td>
+                <td>$app</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_setBlock">
+        <div class="location">at line 47</div>
+        <code>            public            <a href="../../Spark/Controller/ViewContext.html"><abbr title="Spark\Controller\ViewContext">ViewContext</abbr></a>
+    <strong>setBlock</strong>($block, $content)</code>
+    </h3>
+    <div class="details">
+        <p>Assigns the string to the block.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$block</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$content</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><a href="../../Spark/Controller/ViewContext.html"><abbr title="Spark\Controller\ViewContext">ViewContext</abbr></a></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_contentFor">
+        <div class="location">at line 64</div>
+        <code>            public            void
+    <strong>contentFor</strong>($name, <abbr title="Spark\Controller\callable">callable</abbr> $block = null)</code>
+    </h3>
+    <div class="details">
+        <p>Starts capturing content into a block</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$name</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td><abbr title="Spark\Controller\callable">callable</abbr></td>
+                <td>$block</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_endContentFor">
+        <div class="location">at line 81</div>
+        <code>            public            void
+    <strong>endContentFor</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Stops capturing started with `contentFor()` and saves the  captured content to the block name given to `contentFor()`.</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_block">
+        <div class="location">at line 100</div>
+        <code>            public            string
+    <strong>block</strong>(string $name)</code>
+    </h3>
+    <div class="details">
+        <p>Returns the content of the block</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td>Block name</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>string</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_blocks">
+        <div class="location">at line 107</div>
+        <code>            public            
+    <strong>blocks</strong>()</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method___get">
+        <div class="location">at line 112</div>
+        <code>            public            
+    <strong>__get</strong>($property)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$property</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method___call">
+        <div class="location">at line 124</div>
+        <code>            public            
+    <strong>__call</strong>($method, $argv)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$method</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$argv</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>
