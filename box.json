@@ -14,7 +14,7 @@
         }
     ],
     "main": "bin/spark",
-    "output": "_build/spark.phar",
+    "output": "spark.phar",
     "chmod": "0755",
     "stub": true
 }

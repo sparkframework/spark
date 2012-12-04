@@ -44,47 +44,13 @@ fileTask("composer.lock", array("composer.json", "deps"), function($task) {
 
 $libFiles = fileList("*.php")->in("lib/");
 
-fileTask("_build/spark.phar", $libFiles, function($task) {
+fileTask("spark.phar", $libFiles, function($task) {
     sh("php box.phar build -v", null, ["fail_on_error" => true]);
     println("Built PHAR successfully to 'spark.phar'");
 });
 
-directoryTask('_build');
-
 desc("Builds the PHAR");
-task("dist", ['_build', "composer.json", "_build/spark.phar"]);
-
-desc('Builds the PHAR and puts it onto the Github page');
-task('gh-pages', ['docs', 'dist'], function() {
-    $temp = 'spark_ghpages_clone_' . uniqid();
-    $phar = realpath('_build/spark.phar');
-    $api = realpath('_build/api');
-
-    cd(sys_get_temp_dir(), function() use ($phar, $temp, $api) {
-        sh(['git', 'clone', '--branch', 'gh-pages', 'git@github.com:CHH/spark', sys_get_temp_dir() . "/$temp"]);
-        chdir($temp);
-
-        info("Updating API Documentation ...");
-
-        sh('rm -rf api/');
-        sh("cp -R $api ./");
-        sh('git add --all api/');
-        sh('git commit -m "Update API documentatino"');
-
-        info("Updating spark.phar ...");
-
-        copy($phar, "spark.phar");
-        sh('git add spark.phar');
-        sh('git commit -m "Update spark.phar"');
-
-        sh('git push git@github.com:CHH/spark gh-pages');
-    });
-});
-
-desc('Builds the documentation');
-task('docs', ['_build'], function() {
-    php(['vendor/bin/sami.php', 'update', 'sami_config.php', '-v']);
-});
+task("dist", ["composer.json", "spark.phar"]);
 
 desc(
     'Releases a version. Usage: bob release version=<version>'
