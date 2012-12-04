@@ -38,6 +38,7 @@ class CreateApplication extends Command
 
         $directories = [
             "config/environments",
+            "config/initializers",
             "app/assets/javascripts",
             "app/assets/stylesheets",
             "app/assets/vendor/javascripts",
@@ -49,17 +50,19 @@ class CreateApplication extends Command
             "public",
             "tests/",
             "tests/integration",
-            "tests/unit"
+            "tests/unit",
+            "extra"
         ];
 
         foreach ($directories as $dir) {
             mkdir($dir, 0755, true);
+            touch("$dir/.empty");
         }
 
         # Create a world writeable data directory for file caching and temporary files.
         # Available as `spark.data_directory` application variable.
         mkdir("data", 0777, true);
-        file_put_contents('data/.empty', '');
+        touch("data/.empty");
 
         # Create a default Controller
         file_put_contents(
@@ -72,9 +75,10 @@ class CreateApplication extends Command
         $this->fileFromTemplate("public/index.php");
         $this->fileFromTemplate("public/.htaccess");
 
-        mkdir('extra', 0755);
+        # Sample NGINX config
         $this->fileFromTemplate('extra/nginx.conf');
 
+        # Default layout
         $this->fileFromTemplate("app/views/layouts/default.phtml");
 
         # Default configuration files:

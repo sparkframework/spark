@@ -36,6 +36,11 @@ class Upgrade extends Command
             $templateDir = __DIR__ . '/../../../../res';
             copy("$templateDir/templates/public/.htaccess", "public/.htaccess");
         });
+
+        $this->migrate(4, "Add config/initializers", function() {
+            mkdir("config/initializers", 0777, true);
+            touch('config/initializers/.empty');
+        });
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
