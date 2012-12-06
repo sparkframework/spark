@@ -34,7 +34,8 @@
     },
     "require-dev": {
         "sami/sami": "*@dev",
-        "phpunit/phpunit": "3.7@stable"
+        "phpunit/phpunit": "3.7@stable",
+        "symfony/yaml": "*"
     },
     "autoload": {
         "psr-0": {
