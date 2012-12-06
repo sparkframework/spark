@@ -2,6 +2,8 @@
 
 namespace Spark\Controller\ActionHelper;
 
+use \Symfony\Component\HttpFoundation\Response;
+
 trait Filters
 {
     private $filters = [];
@@ -14,6 +16,10 @@ trait Filters
     function afterFilter($filter, $options = [])
     {
         return $this->addFilter("after", $filter, $options);
+    }
+
+    function aroundFilter($filter, $options = [])
+    {
     }
 
     function onBeforeFilter()
@@ -30,8 +36,19 @@ trait Filters
     {
         if (!isset($this->filters[$type])) return;
 
+        $request = $this->request();
+        $action = $request->attributes->get('action');
+
         foreach ($this->filters[$type] as $filter) {
             list($callback, $options) = $filter;
+
+            if (isset($options['exclude']) and in_array($action, (array) $options['exclude'])) {
+                continue;
+            }
+
+            if (isset($options['only']) and !in_array($action, (array) $options['only'])) {
+                continue;
+            }
 
             $returnValue = $callback($this);
 
@@ -41,10 +58,6 @@ trait Filters
 
     private function addFilter($type, $filter, $options)
     {
-        if (!isset($this->filters[$type])) {
-            $this->filters[$type] = [];
-        }
-
         if (is_string($filter) and is_callable([$this, $filter])) {
             $callback = [$this, $filter];
         } else if (is_callable($filter)) {

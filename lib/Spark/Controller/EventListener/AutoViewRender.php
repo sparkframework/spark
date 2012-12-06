@@ -51,6 +51,11 @@ class AutoViewRender implements EventSubscriberInterface
         $actionName = $request->attributes->get('action');
 
         $controller = $this->resolver->getController($controllerName);
+
+        if (!$controller) {
+            return;
+        }
+
         $response = $controller->response();
 
         $response = $this->renderPipeline->render([

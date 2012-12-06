@@ -77,6 +77,9 @@ class ControllerClassResolver implements EventSubscriberInterface
             return;
         }
 
+        $request->attributes->set('action', $actionName);
+        $request->attributes->set('controller', $controllerName);
+
         if (is_callable([$controller, "onBeforeFilter"])) {
             $route->before([$controller, "onBeforeFilter"]);
         }
@@ -84,9 +87,6 @@ class ControllerClassResolver implements EventSubscriberInterface
         if (is_callable([$controller, "onAfterFilter"])) {
             $route->after([$controller, "onAfterFilter"]);
         }
-
-        $request->attributes->set('action', $actionName);
-        $request->attributes->set('controller', $controllerName);
 
         if (is_callable([$controller, $action])) {
             $request->attributes->set('_controller', [$controller, $action]);
