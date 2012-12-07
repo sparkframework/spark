@@ -2,12 +2,35 @@
 
 namespace Spark\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class ControllerCollection extends \Silex\ControllerCollection
 {
     function draw(callable $callback)
     {
         $callback($this);
         return $this;
+    }
+
+    /**
+     * Returns a controller which redirects to the specified URL.
+     *
+     * @param string $url
+     */
+    function redirect($to, $options = [])
+    {
+        return function(\Silex\Application $app) use ($to, $options) {
+            $headers = (array) @$options['headers'];
+            $status = @$options['status'] ?: 302;
+            $params = (array) @$options['params'];
+            $absolute = @$options['absolute'] ?: false;
+
+            if ($route = $app['routes']->get($to)) {
+                $to = $app['url_generator']->generate($to, $params, $absolute);
+            }
+
+            return new RedirectResponse($to, $status, $headers);
+        };
     }
 
     /**
