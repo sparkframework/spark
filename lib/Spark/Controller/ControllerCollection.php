@@ -21,6 +21,8 @@ class ControllerCollection extends \Silex\ControllerCollection
      *   $routes->match('/foo', $routes->redirect('/bar'));
      *
      * @param string $url
+     * @param array $options
+     * @return \Closure
      */
     function redirect($to, $options = [])
     {
