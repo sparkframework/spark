@@ -15,6 +15,11 @@ class ControllerCollection extends \Silex\ControllerCollection
     /**
      * Returns a controller which redirects to the specified URL.
      *
+     * Example:
+     *
+     *   <?php
+     *   $routes->match('/foo', $routes->redirect('/bar'));
+     *
      * @param string $url
      */
     function redirect($to, $options = [])
