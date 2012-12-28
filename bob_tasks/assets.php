@@ -10,7 +10,7 @@ desc(
 task('assets:precompile', function() {
     $application = require 'config/bootstrap.php';
 
-    $env = $application['pipe']->environment;
+    $env = $application['pipe.environment'];
 
     $manifest = new Manifest($env, $application['pipe.precompile_directory'] . '/manifest.json');
     $manifest->compress = true;
