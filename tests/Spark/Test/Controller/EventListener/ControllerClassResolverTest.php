@@ -22,7 +22,7 @@ class ControllerClassResolverTest extends \Silex\WebTestCase
     {
         $app = new Application;
 
-        $resolver = $this->resolver = new ControllerClassResolver($app);           
+        $resolver = $this->resolver = new ControllerClassResolver($app);
         $resolver->registerModule('default', '\\Spark\\Test\\Controller\\EventListener');
 
         $app['debug'] = true;

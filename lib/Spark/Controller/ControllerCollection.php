@@ -6,9 +6,17 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ControllerCollection extends \Silex\ControllerCollection
 {
+    /**
+     * Invokes the callback with the collection as argument
+     *
+     * @param callable $callback
+     *
+     * @return ControllerCollection
+     */
     function draw(callable $callback)
     {
         $callback($this);
+
         return $this;
     }
 
@@ -22,16 +30,18 @@ class ControllerCollection extends \Silex\ControllerCollection
      *
      * @param string $url
      * @param array $options
+     *
      * @return \Closure
      */
     function redirect($to, $options = [])
     {
         return function(\Silex\Application $app) use ($to, $options) {
-            $headers = (array) @$options['headers'];
-            $status = @$options['status'] ?: 302;
-            $params = (array) @$options['params'];
+            $headers  = (array) @$options['headers'];
+            $status   = @$options['status'] ?: 302;
+            $params   = (array) @$options['params'];
             $absolute = @$options['absolute'] ?: false;
 
+            # Generate URL if the first argument is an existing route name
             if ($route = $app['routes']->get($to)) {
                 $to = $app['url_generator']->generate($to, $params, $absolute);
             }
@@ -43,15 +53,20 @@ class ControllerCollection extends \Silex\ControllerCollection
     /**
      * Define resource routes for a plural resource.
      *
+     * Example:
+     *
+     *   <?php
+     *   $router->resources('posts');
+     *
      * This defines the following routes, for the resource 'posts':
      *
-     * GET /posts           | posts#index
-     * GET /posts/new       | posts#new
-     * GET /posts/{id}      | posts#show
-     * GET /posts/{id}/edit | posts#edit
-     * POST /posts          | posts#create
-     * PUT /posts/{id}      | posts#update
-     * DELETE /posts/{id}   | posts#delete
+     * GET    /posts           | posts#index
+     * GET    /posts/new       | posts#new
+     * GET    /posts/{id}      | posts#show
+     * GET    /posts/{id}/edit | posts#edit
+     * POST   /posts           | posts#create
+     * PUT    /posts/{id}      | posts#update
+     * DELETE /posts/{id}      | posts#delete
      *
      * @param string $resourceName
      * @param array $options
@@ -90,14 +105,19 @@ class ControllerCollection extends \Silex\ControllerCollection
      * Define resource routes for a singular resource (a resource where
      * there can be only one of it)
      *
+     * Example:
+     *
+     *   <?php
+     *   $router->resource('profile');
+     *
      * This defines the following routes for a resource "profile":
      *
-     * GET /profile      | profile#show
-     * GET /profile/new  | profile#new
-     * GET /profile/edit | profile#edit
-     * POST /profile     | profile#create
-     * PUT /profile      | profile#update
-     * DELETE /profile   | profile#delete
+     * GET    /profile      | profile#show
+     * GET    /profile/new  | profile#new
+     * GET    /profile/edit | profile#edit
+     * POST   /profile      | profile#create
+     * PUT    /profile      | profile#update
+     * DELETE /profile      | profile#delete
      *
      * @param string $resourceName
      * @param array $options
