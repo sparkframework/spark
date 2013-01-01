@@ -18,12 +18,13 @@ class CreateApplication extends Command
     {
         $this->setName('create')
             ->setDescription('Creates a new application')
-            ->addArgument('application_name', InputArgument::REQUIRED, 'Name of the application');
+            ->addOption('skip-composer', null, InputOption::VALUE_NONE, "Skip installing dependencies after creating the skeleton")
+            ->addArgument('application-name', InputArgument::REQUIRED, 'Name of the application');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $name = $input->getArgument('application_name');
+        $name = $input->getArgument('application-name');
         $appName = Strings::camelize(basename($name), true);
 
         if (is_dir($name)) {
@@ -118,7 +119,9 @@ class CreateApplication extends Command
         $output->writeln("Downloading Composer...");
         $this->downloadComposer();
 
-        passthru('php composer.phar install --dev');
+        if (!$input->getOption('skip-composer')) {
+            passthru('php composer.phar install --dev');
+        }
 
         $output->writeln("<info>Successfully created application $appName in " . getcwd() . "</info>");
     }
