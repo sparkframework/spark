@@ -6,6 +6,33 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ControllerCollection extends \Silex\ControllerCollection
 {
+    protected $scopes = [];
+
+    /**
+     * Scopes all routes in the collection to the given prefix
+     *
+     * Example:
+     *
+     *   <?php
+     *
+     *   $routes->scope('/admin', function($admin) {
+     *       $admin->match('/', 'admin::index#index');
+     *   });
+     *
+     * @param string $prefix
+     * @param callable $callback Callback which gets invoked with the collection
+     */
+    function scope($prefix, callable $callback)
+    {
+        $routes = new static($this->defaultRoute);
+
+        $callback($routes);
+
+        $this->scopes[$prefix] = $routes;
+
+        return $this;
+    }
+
     /**
      * Invokes the callback with the collection as argument
      *
@@ -136,6 +163,17 @@ class ControllerCollection extends \Silex\ControllerCollection
         $this->delete("/$resourceName", "$controller#destroy");
 
         return $this;
+    }
+
+    function flush($prefix = '')
+    {
+        $routeCollection = parent::flush($prefix);
+
+        foreach ($this->scopes as $scope => $controllerCollection) {
+            $routeCollection->addCollection($controllerCollection->flush($scope), $scope);
+        }
+
+        return $routeCollection;
     }
 }
 
