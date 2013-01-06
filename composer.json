@@ -34,8 +34,9 @@
     },
     "require-dev": {
         "sami/sami": "*@dev",
-        "phpunit/phpunit": "3.7@stable",
-        "symfony/yaml": "*"
+        "phpunit/phpunit": "~3.7",
+        "symfony/yaml": "*",
+        "aptoma/twig-markdown": "*"
     },
     "autoload": {
         "psr-0": {

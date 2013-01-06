@@ -101,8 +101,9 @@ class ControllerCollection extends \Silex\ControllerCollection
      *
      * Example:
      *
-     *   <?php
-     *   $router->resources('posts');
+     *     <?php
+     *
+     *     $router->resources('posts');
      *
      * This defines the following routes, for the resource 'posts':
      *
@@ -155,17 +156,19 @@ class ControllerCollection extends \Silex\ControllerCollection
      *
      * Example:
      *
-     *   <?php
-     *   $router->resource('profile');
+     *     <?php
+     *     $router->resource('profile');
      *
      * This defines the following routes for a resource "profile":
      *
-     * GET    /profile      | profile#show
-     * GET    /profile/new  | profile#new
-     * GET    /profile/edit | profile#edit
-     * POST   /profile      | profile#create
-     * PUT    /profile      | profile#update
-     * DELETE /profile      | profile#delete
+     * | Route                | Action         |
+     * | -------------------- | -------------- |
+     * | GET    /profile      | profile#show   |
+     * | GET    /profile/new  | profile#new    |
+     * | GET    /profile/edit | profile#edit   |
+     * | POST   /profile      | profile#create |
+     * | PUT    /profile      | profile#update |
+     * | DELETE /profile      | profile#delete |
      *
      * @param string $resourceName
      * @param array $options
