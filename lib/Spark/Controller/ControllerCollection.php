@@ -4,6 +4,25 @@ namespace Spark\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * Defines more convenience methods for defining routes
+ *
+ * Examples:
+ *
+ *     <?php
+ *
+ *     $app['controllers']->draw(function($routes) {
+ *         # Defines set of routes to manipulate a collection of posts.
+ *         $routes->resources('posts');
+ *
+ *         # Scope all routes defined using the callback to the given
+ *         # prefix.
+ *         $routes->scope('/admin', function($admin) {
+ *             $admin->get('/', 'admin#index');
+ *         });
+ *     });
+ *
+ */
 class ControllerCollection extends \Silex\ControllerCollection
 {
     protected $scopes = [];
@@ -13,11 +32,11 @@ class ControllerCollection extends \Silex\ControllerCollection
      *
      * Example:
      *
-     *   <?php
+     *     <?php
      *
-     *   $routes->scope('/admin', function($admin) {
-     *       $admin->match('/', 'admin::index#index');
-     *   });
+     *     $routes->scope('/admin', function($admin) {
+     *         $admin->match('/', 'admin::index#index');
+     *     });
      *
      * @param string $prefix
      * @param callable $callback Callback which gets invoked with the collection
@@ -52,8 +71,8 @@ class ControllerCollection extends \Silex\ControllerCollection
      *
      * Example:
      *
-     *   <?php
-     *   $routes->match('/foo', $routes->redirect('/bar'));
+     *     <?php
+     *     $routes->match('/foo', $routes->redirect('/bar'));
      *
      * @param string $url
      * @param array $options
@@ -87,13 +106,15 @@ class ControllerCollection extends \Silex\ControllerCollection
      *
      * This defines the following routes, for the resource 'posts':
      *
-     * GET    /posts           | posts#index
-     * GET    /posts/new       | posts#new
-     * GET    /posts/{id}      | posts#show
-     * GET    /posts/{id}/edit | posts#edit
-     * POST   /posts           | posts#create
-     * PUT    /posts/{id}      | posts#update
-     * DELETE /posts/{id}      | posts#delete
+     * | Route                   | Action        |
+     * | ----------------------- | ------------- |
+     * | GET    /posts           | posts#index   |
+     * | GET    /posts/new       | posts#new     |
+     * | GET    /posts/{id}      | posts#show    |
+     * | GET    /posts/{id}/edit | posts#edit    |
+     * | POST   /posts           | posts#create  |
+     * | PUT    /posts/{id}      | posts#update  |
+     * | DELETE /posts/{id}      | posts#delete  |
      *
      * @param string $resourceName
      * @param array $options
