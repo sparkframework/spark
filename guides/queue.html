@@ -5,7 +5,7 @@
             Background Processing API
         </title>
 
-        <link rel="stylesheet" href="/spark/assets/screen-643c424bb54f1892b0d98e4b23a6b9dc58f8e0b9.css" type="text/css">
+        <link rel="stylesheet" href="/spark/assets/screen-de9ce9b1cb1ad78a32d7bd89fc88d021fa2f0cff.css" type="text/css">
 
 
         <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/solarized_light.min.css">
@@ -18,29 +18,50 @@
             <h1><a href="/spark/guides.html">Spark Guides</a></h1>
         </header>
 
-        
-<h1>Background Processing API</h1>
+        <article class="guide">
+    <nav class="toc">
+    <ul>
+<li>
+<a href="#toc_0">Background Processing API</a>
+<ul>
+<li>
+<a href="#toc_1">A Quick Example</a>
+</li>
+<li>
+<a href="#toc_2">Going concurrent</a>
+</li>
+<li>
+<a href="#toc_3">Implementing a Queue</a>
+</li>
+</ul>
+</li>
+</ul>
 
-<p>Need to make an time consuming operation, but don't want to slow down
+    </nav>
+
+    <div class="content">
+    <h1 id="toc_0">Background Processing API</h1>
+
+<p>Need to make an time consuming operation, but don&#39;t want to slow down
 the app? Then Spark has covered your back.</p>
 
-<hr />
+<hr>
 
 <p>Spark features a very simple and generic API for writing background
 jobs. The main building block is the <code>queue</code> service. The <code>queue</code>
-service features one method, that's interesting within the application: <code>push</code>.</p>
+service features one method, that&#39;s interesting within the application: <code>push</code>.</p>
 
 <p>The <code>push</code> method takes one job (a child of <code>Spark\Core\Job</code>) and pushes
 it onto the queue. A queue worker then takes the job from the queue by
 calling the <code>pop</code> method. When the worker has received a job, it calls
 the <code>run</code> method.</p>
 
-<h2>A Quick Example</h2>
+<h2 id="toc_1">A Quick Example</h2>
 
-<p>Take for example some expensive conversion task. You don't want your
+<p>Take for example some expensive conversion task. You don&#39;t want your
 users to notice that the conversion happens.</p>
 
-<p>Let's create a job class for our task. A basic class can look like this:</p>
+<p>Let&#39;s create a job class for our task. A basic class can look like this:</p>
 
 <pre><code>&lt;?php
 # lib/MyApp/HelloWorldJob.php
@@ -61,18 +82,19 @@ class HelloWorldJob extends \Spark\Core\Job
         # Simulate something expensive
         sleep(20);
 
-        $this-&gt;application['logger']-&gt;info("Hello World {$this-&gt;name}!");
+        $this-&gt;application[&#39;logger&#39;]-&gt;info(&quot;Hello World {$this-&gt;name}!&quot;);
     }
 }
 </code></pre>
 
-<p>You can instantiate this class like any other. Just pass all required
-paramaters to the constructor.</p>
+<p>You can instantiate this class like any other simple class. Just pass all required
+parameters to the constructor.</p>
 
 <p>You also have automatically access to the application object via the
-job's <code>application</code> property.</p>
+job&#39;s <code>application</code> property.</p>
 
-<p>Do this in your controller:</p>
+<p>To push the job into the queue, use the <code>queue</code> service and call the
+<code>push</code> method with the job object.</p>
 
 <pre><code>&lt;?php
 
@@ -86,7 +108,7 @@ class HelloController extends ApplicationController
     {
         $job = new HelloWorldJob($name);
 
-        $this-&gt;application['queue']-&gt;push($job);
+        $this-&gt;application[&#39;queue&#39;]-&gt;push($job);
     }
 }
 </code></pre>
@@ -95,31 +117,30 @@ class HelloController extends ApplicationController
 simply invoke <code>./vendor/bin/spark queue:worker</code> in your application
 directory.</p>
 
-<p>If you request your controller in your browser, with a name say "John Doe", the page renders quick,
-despite the fact that our job needs 20 seconds to run.</p>
+<p>If you request your controller in your browser, with a name say &quot;John Doe&quot;, the page renders quick, despite the fact that our job needs 20 seconds to run.</p>
 
 <p>Then look at the console window where you run the <code>queue:worker</code>
-command. You should see "Hello World John Doe!".</p>
+command. You should see &quot;Hello World John Doe!&quot;.</p>
 
-<h2>Going concurrent</h2>
+<h2 id="toc_2">Going concurrent</h2>
 
 <div class="info-box">
-Concurrent execution of jobs is only available on __*nix__ platforms,
-like Linux or OSX.
+Concurrent execution of jobs is only available on platforms which are supported
+by the <a href="http://php.net/pcntl">PCNTL</a> extension, like Linux, BSD or OSX.
 </div>
 
 <p>One thing you may have noticed is, that the worker only processes one
-job at a time.</p>
+job at a time. </p>
 
 <p>This has some pretty big drawbacks:</p>
 
 <ul>
-<li>A job gone wrong is able to kill the worker, and there's no automatic
+<li>A job gone wrong is able to kill the worker, and there&#39;s no automatic
 respawn of workers.</li>
 <li>Only one CPU core is used for processing workers.</li>
 </ul>
 
-<p>If you happen to have a &#42;nix OS and the <code>pcntl</code> extension enabled, you
+<p>If you happen to have a *nix OS and the <code>pcntl</code> extension enabled, you
 can use the <code>-c</code> flag on the <code>queue:worker</code> command and set it to
 something greater than zero to enable the preforking worker.</p>
 
@@ -135,7 +156,7 @@ used from the <code>-c</code> flag), which each call <code>pop</code> on the que
 <p>The master process then attempts to keep <em>n</em> child processes around,
 starting new ones and killing stale ones as it becomes necessary.</p>
 
-<h2>Implementing a Queue</h2>
+<h2 id="toc_3">Implementing a Queue</h2>
 
 <p>The queuing system is built on top of <a href="https://github.com/CHH/kue">Kue</a>, an abstraction layer on
 top of multiple job queue systems.</p>
@@ -156,13 +177,14 @@ efficient transportation methods, like bulk requests.</li>
 <p>To override the queue implementation, set the <code>queue</code> service in your
 <code>config/application.php</code>:</p>
 
-<pre><code>$app['queue'] = $app-&gt;share(function() use ($app) {
-    return new MyRedisQueue($app['redis']);
+<pre><code>$app[&#39;queue&#39;] = $app-&gt;share(function() use ($app) {
+    return new MyRedisQueue($app[&#39;redis&#39;]);
 });
 </code></pre>
 
 <p>A simple queue, which uses Redis as storage for jobs, could look like
-this (but see <a href="https://github.com/CHH/kue/tree/master/lib/Kue/RedisQueue.php">Kue&#92;RedisQueue</a> if you need this for real):</p>
+this (but see <a href="https://github.com/CHH/kue/tree/master/lib/Kue/RedisQueue.php">Kue\RedisQueue</a> if you need this for
+production environments):</p>
 
 <pre><code>&lt;?php
 
@@ -171,18 +193,20 @@ use Kue\Queue;
 
 class MyRedisQueue implements Queue
 {
-    const QUEUE_KEY = "spark:queue";
+    const DEFAULT_QUEUE = &quot;spark:queue&quot;;
 
     protected $redis;
+    protected $queue;
 
-    function __construct(\Redis $redis)
+    function __construct(\Redis $redis, $queue = static::DEFAULT_QUEUE)
     {
         $this-&gt;redis = $redis;
+        $this-&gt;queue = $queue;
     }
 
     function pop()
     {
-        $response = $this-&gt;redis-&gt;blPop(self::QUEUE_KEY, 10);
+        $response = $this-&gt;redis-&gt;blPop($this-&gt;queue, 10);
 
         if ($response) {
             list($list, $serializedJob) = $response;
@@ -194,17 +218,18 @@ class MyRedisQueue implements Queue
 
     function push(Job $job)
     {
-        $this-&gt;redis-&gt;rPush(self::QUEUE_KEY, serialize($job));
+        $this-&gt;redis-&gt;rPush($this-&gt;queue, serialize($job));
     }
 
     function flush()
     {
-        # We send jobs directly in `push`, so we don't need to flush
+        # We send jobs directly in `push`, so we don&#39;t need to flush
     }
 }
 </code></pre>
 
-
+    </div>
+</article>
 
         <script type="text/javascript">
     hljs.initHighlighting();

@@ -5,7 +5,15 @@
         <meta name="robots" content="index, follow, all" />
         <title>Spark\Controller\ControllerCollection | Spark Framework API</title>
                     <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
-                            </head>
+        
+<link rel="stylesheet" type="text/css" href="../../spark.css">
+<link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/github.min.css">
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+                    </head>
         <body id="class">
             <div class="header">
         <ul>
@@ -24,6 +32,29 @@
         <div class="content">
                 <p>class    <strong>ControllerCollection</strong>        extends <abbr title="Silex\ControllerCollection">ControllerCollection</abbr></p>
 
+            <div class="shortdesc">
+            <p>Defines more convenience methods for defining routes</p>
+
+        </div>
+
+        <div class="longdesc">
+            <p>Examples:</p>
+
+<pre><code> &lt;?php
+
+ $app['controllers']-&gt;draw(function($routes) {
+     # Defines set of routes to manipulate a collection of posts.
+     $routes-&gt;resources('posts');
+
+     # Scope all routes defined using the callback to the given
+     # prefix.
+     $routes-&gt;scope('/admin', function($admin) {
+         $admin-&gt;get('/', 'admin#index');
+     });
+ });
+</code></pre>
+
+        </div>
     
     
     
@@ -35,8 +66,18 @@
                     
                 </td>
                 <td class="last">
+                    <a href="#method_scope">scope</a>(string $prefix, <abbr title="Spark\Controller\callable">callable</abbr> $callback)
+                    <p>Scopes all routes in the collection to the given prefix</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <a href="../../Spark/Controller/ControllerCollection.html"><abbr title="Spark\Controller\ControllerCollection">ControllerCollection</abbr></a>
+                </td>
+                <td class="last">
                     <a href="#method_draw">draw</a>(<abbr title="Spark\Controller\callable">callable</abbr> $callback)
-                    <p></p>
+                    <p>Invokes the callback with the collection as argument</p>
                 </td>
                 <td></td>
             </tr>
@@ -70,19 +111,70 @@
                 </td>
                 <td></td>
             </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="#method_flush">flush</a>($prefix = &#039;&#039;)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
             </table>
 
 
         <h2>Details</h2>
 
-                        <h3 id="method_draw">
-        <div class="location">at line 9</div>
+                        <h3 id="method_scope">
+        <div class="location">at line 44</div>
         <code>            public            
+    <strong>scope</strong>(string $prefix, <abbr title="Spark\Controller\callable">callable</abbr> $callback)</code>
+    </h3>
+    <div class="details">
+        <div class="shortdesc"><p>Scopes all routes in the collection to the given prefix</p>
+</div>
+        <div class="longdesc"><p>Example:</p>
+
+<pre><code> &lt;?php
+
+ $routes-&gt;scope('/admin', function($admin) {
+     $admin-&gt;match('/', 'admin::index#index');
+ });
+</code></pre>
+</div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$prefix</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td><abbr title="Spark\Controller\callable">callable</abbr></td>
+                <td>$callback</td>
+                <td>Callback which gets invoked with the collection</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_draw">
+        <div class="location">at line 62</div>
+        <code>            public            <a href="../../Spark/Controller/ControllerCollection.html"><abbr title="Spark\Controller\ControllerCollection">ControllerCollection</abbr></a>
     <strong>draw</strong>(<abbr title="Spark\Controller\callable">callable</abbr> $callback)</code>
     </h3>
     <div class="details">
-        <p></p>
-        <p></p>
+        <div class="shortdesc"><p>Invokes the callback with the collection as argument</p>
+</div>
+        <div class="longdesc">
+</div>
         <div class="tags">
                             <h4>Parameters</h4>
 
@@ -95,22 +187,34 @@
             </table>
 
             
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><a href="../../Spark/Controller/ControllerCollection.html"><abbr title="Spark\Controller\ControllerCollection">ControllerCollection</abbr></a></td>
+            <td></td>
+        </tr>
+    </table>
+
             
             
                     </div>
     </div>
 
                 <h3 id="method_redirect">
-        <div class="location">at line 27</div>
+        <div class="location">at line 82</div>
         <code>            public            <a href="http://php.net/Closure"><abbr title="Closure">Closure</abbr></a>
     <strong>redirect</strong>($to, $options = array())</code>
     </h3>
     <div class="details">
-        <p>Returns a controller which redirects to the specified URL.</p>
-        <p>Example:<br />
-<br />
-   &lt;?php<br />
-   $routes-&gt;match(&#039;/foo&#039;, $routes-&gt;redirect(&#039;/bar&#039;));</p>
+        <div class="shortdesc"><p>Returns a controller which redirects to the specified URL.</p>
+</div>
+        <div class="longdesc"><p>Example:</p>
+
+<pre><code> &lt;?php
+ $routes-&gt;match('/foo', $routes-&gt;redirect('/bar'));
+</code></pre>
+</div>
         <div class="tags">
                             <h4>Parameters</h4>
 
@@ -143,21 +247,59 @@
     </div>
 
                 <h3 id="method_resources">
-        <div class="location">at line 61</div>
+        <div class="location">at line 124</div>
         <code>            public            <a href="../../Spark/Controller/ControllerCollection.html"><abbr title="Spark\Controller\ControllerCollection">ControllerCollection</abbr></a>
     <strong>resources</strong>(string $resourceName, array $options = array())</code>
     </h3>
     <div class="details">
-        <p>Define resource routes for a plural resource.</p>
-        <p>This defines the following routes, for the resource &#039;posts&#039;:<br />
-<br />
- GET /posts           | posts#index<br />
- GET /posts/new       | posts#new<br />
- GET /posts/{id}      | posts#show<br />
- GET /posts/{id}/edit | posts#edit<br />
- POST /posts          | posts#create<br />
- PUT /posts/{id}      | posts#update<br />
- DELETE /posts/{id}   | posts#delete</p>
+        <div class="shortdesc"><p>Define resource routes for a plural resource.</p>
+</div>
+        <div class="longdesc"><p>Example:</p>
+
+<p>&lt;?php
+   $router->resources('posts');</p>
+
+<p>This defines the following routes, for the resource 'posts':</p>
+
+<table>
+<thead>
+<tr>
+  <th>Route</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>GET    /posts</td>
+  <td>posts#index</td>
+</tr>
+<tr>
+  <td>GET    /posts/new</td>
+  <td>posts#new</td>
+</tr>
+<tr>
+  <td>GET    /posts/{id}</td>
+  <td>posts#show</td>
+</tr>
+<tr>
+  <td>GET    /posts/{id}/edit</td>
+  <td>posts#edit</td>
+</tr>
+<tr>
+  <td>POST   /posts</td>
+  <td>posts#create</td>
+</tr>
+<tr>
+  <td>PUT    /posts/{id}</td>
+  <td>posts#update</td>
+</tr>
+<tr>
+  <td>DELETE /posts/{id}</td>
+  <td>posts#delete</td>
+</tr>
+</tbody>
+</table>
+</div>
         <div class="tags">
                             <h4>Parameters</h4>
 
@@ -190,20 +332,27 @@
     </div>
 
                 <h3 id="method_resource">
-        <div class="location">at line 107</div>
+        <div class="location">at line 175</div>
         <code>            public            <a href="../../Spark/Controller/ControllerCollection.html"><abbr title="Spark\Controller\ControllerCollection">ControllerCollection</abbr></a>
     <strong>resource</strong>(string $resourceName, array $options = array())</code>
     </h3>
     <div class="details">
-        <p>Define resource routes for a singular resource (a resource where there can be only one of it)</p>
-        <p>This defines the following routes for a resource &quot;profile&quot;:<br />
-<br />
- GET /profile      | profile#show<br />
- GET /profile/new  | profile#new<br />
- GET /profile/edit | profile#edit<br />
- POST /profile     | profile#create<br />
- PUT /profile      | profile#update<br />
- DELETE /profile   | profile#delete</p>
+        <div class="shortdesc"><p>Define resource routes for a singular resource (a resource where there can be only one of it)</p>
+</div>
+        <div class="longdesc"><p>Example:</p>
+
+<p>&lt;?php
+   $router->resource('profile');</p>
+
+<p>This defines the following routes for a resource "profile":</p>
+
+<p>GET    /profile      | profile#show
+ GET    /profile/new  | profile#new
+ GET    /profile/edit | profile#edit
+ POST   /profile      | profile#create
+ PUT    /profile      | profile#update
+ DELETE /profile      | profile#delete</p>
+</div>
         <div class="tags">
                             <h4>Parameters</h4>
 
@@ -230,6 +379,33 @@
         </tr>
     </table>
 
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_flush">
+        <div class="location">at line 189</div>
+        <code>            public            
+    <strong>flush</strong>($prefix = &#039;&#039;)</code>
+    </h3>
+    <div class="details">
+        <div class="shortdesc">
+</div>
+        <div class="longdesc">
+</div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$prefix</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
             
             
                     </div>
