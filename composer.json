@@ -16,6 +16,7 @@
     "require": {
         "php": ">=5.4.0",
         "silex/silex": "1.0.*@dev",
+        "spark/action-pack": "@dev",
         "symfony/class-loader": "*",
         "symfony/process": "2.1.*@stable",
         "symfony/console": "2.1.*@stable",

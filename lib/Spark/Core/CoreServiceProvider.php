@@ -11,7 +11,7 @@ use Silex\Provider\UrlGeneratorServiceProvider;
 use Silex\Provider\MonologServiceProvider;
 
 use Pipe\Silex\PipeServiceProvider;
-use Spark\Controller\ControllerServiceProvider;
+use Spark\ActionPack\ActionPackServiceProvider;
 use Kue\LocalQueue;
 use CHH\Silex\CacheServiceProvider;
 
@@ -99,6 +99,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return new LocalQueue;
         });
 
+        $this->setupActionPackServiceProvider($app);
         $this->setupCacheServiceProvider($app);
 
         $app->register(new MonologServiceProvider, array(
@@ -114,7 +115,69 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             'pipe.root' => $app->share(function($app) { return "{$app['spark.root']}/app/assets"; })
         ]);
 
-        $app->register(new ControllerServiceProvider);
+        $app->register(new ActionPackServiceProvider);
+    }
+
+    protected function setupActionPackServiceProvider($app)
+    {
+        $app['spark.action_pack.controller_class_resolver'] = $app->share(
+            $app->extend('spark.action_pack.controller_class_resolver', function($resolver) {
+                $resolver->setDefaultModule($app['spark.default_module']);
+                $resolver->registerModule($app['spark.default_module'], Strings::camelize($app['spark.app.name']));
+
+                return $resolver;
+            })
+        );
+
+        $app['spark.action_pack.render_pipeline'] = $app->share(
+            $app->extend('spark.action_pack.render_pipeline', function($render) {
+                $render->addFormat('text/plain', function($viewContext) {
+                    $viewContext->parent = null;
+                    return $viewContext->options['text'];
+                });
+
+                $render->addFormat('text/html', function($viewContext) {
+                    if (isset($viewContext->options['html'])) {
+                        return $viewContext->options['html'];
+                    }
+                });
+
+                $render->addFormat('application/json', function($viewContext) {
+                    $viewContext->parent = null;
+                    $flags = 0;
+
+                    if (@$viewContext->options['pretty']) {
+                        $flags |= JSON_PRETTY_PRINT;
+                    }
+
+                    return json_encode($viewContext->options['json'], $flags);
+                });
+
+                $render->scriptPath->appendExtensions(\MetaTemplate\Template::getEngines()->getEngineExtensions());
+
+                $render->addFallback(function($viewContext) {
+                    if (empty($viewContext->script)) return;
+
+                    $template = \MetaTemplate\Template::create($viewContext->script);
+
+                    if ($viewContext->response) {
+                        $headers = $viewContext->response->headers;
+
+                        if (is_callable([$template, 'getDefaultContentType']) and !$headers->has('Content-Type')) {
+                            $headers->set('Content-Type', $template->getDefaultContentType());
+                        }
+
+                        if ($headers->get('Content-Type') !== "text/html") {
+                            $viewContext->parent = null;
+                        }
+                    }
+
+                    return $template->render($viewContext);
+                });
+
+                return $render;
+            })
+        );
     }
 
     protected function setupCacheServiceProvider($app)
