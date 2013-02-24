@@ -14,15 +14,16 @@ use Pipe\Silex\PipeServiceProvider;
 use Spark\ActionPack\ActionPackServiceProvider;
 use Kue\LocalQueue;
 use CHH\Silex\CacheServiceProvider;
+use Spark\Support\Strings;
 
 class CoreServiceProvider implements \Silex\ServiceProviderInterface
 {
     function register(Application $app)
     {
         # Override Silex' controllers factory with our own builder, which features
-        # more advanced route building methods, like 'resource'.
+        # more convenient route building methods.
         $app["controllers_factory"] = function($app) {
-            return new \Spark\Controller\ControllerCollection($app["route_factory"]);
+           return new \Spark\ActionPack\ControllerCollection($app["route_factory"]);
         };
 
         $app['config'] = $app->share(function($app) {
@@ -56,14 +57,14 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return $loader;
         });
 
-        $app['spark.view_path'] = $app->share(function($app) {
+        $app['spark.action_pack.view_path'] = $app->share(function($app) {
             return [
                  "{$app['spark.root']}/app/views",
                  "{$app['spark.root']}/app/views/layouts"
             ];
         });
 
-        $app['spark.view_context_class'] = function($app) {
+        $app['spark.action_pack.view_context_class'] = function($app) {
             return "\\{$app['spark.app.name']}\\ViewContext";
         };
 
@@ -99,7 +100,6 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return new LocalQueue;
         });
 
-        $this->setupActionPackServiceProvider($app);
         $this->setupCacheServiceProvider($app);
 
         $app->register(new MonologServiceProvider, array(
@@ -116,12 +116,13 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         ]);
 
         $app->register(new ActionPackServiceProvider);
+        $this->setupActionPackServiceProvider($app);
     }
 
     protected function setupActionPackServiceProvider($app)
     {
         $app['spark.action_pack.controller_class_resolver'] = $app->share(
-            $app->extend('spark.action_pack.controller_class_resolver', function($resolver) {
+            $app->extend('spark.action_pack.controller_class_resolver', function($resolver) use ($app) {
                 $resolver->setDefaultModule($app['spark.default_module']);
                 $resolver->registerModule($app['spark.default_module'], Strings::camelize($app['spark.app.name']));
 
@@ -130,7 +131,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         );
 
         $app['spark.action_pack.render_pipeline'] = $app->share(
-            $app->extend('spark.action_pack.render_pipeline', function($render) {
+            $app->extend('spark.action_pack.render_pipeline', function($render) use ($app) {
                 $render->addFormat('text/plain', function($viewContext) {
                     $viewContext->parent = null;
                     return $viewContext->options['text'];
