@@ -9,9 +9,11 @@ use Silex\Application;
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Silex\Provider\MonologServiceProvider;
+use Silex\Provider\TwigServiceProvider;
 
 use Pipe\Silex\PipeServiceProvider;
 use Spark\ActionPack\ActionPackServiceProvider;
+use Spark\ActionPack\View;
 use Kue\LocalQueue;
 use CHH\Silex\CacheServiceProvider;
 use Spark\Support\Strings;
@@ -64,10 +66,6 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             ];
         });
 
-        $app['spark.action_pack.view_context_class'] = function($app) {
-            return "\\{$app['spark.app.name']}\\ViewContext";
-        };
-
         $app['spark.default_module'] = function($app) {
             return $app['spark.app.name'];
         };
@@ -108,6 +106,14 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             }
         ));
 
+        if (php_sapi_name() == "cli-server") {
+            $app['monolog'] = $app->share($app->extend('monolog', function($logger) {
+                $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stderr'));
+
+                return $logger;
+            }));
+        }
+
         $app->register(new SessionServiceProvider);
         $app->register(new UrlGeneratorServiceProvider);
 
@@ -130,53 +136,41 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             })
         );
 
-        $app['spark.action_pack.render_pipeline'] = $app->share(
-            $app->extend('spark.action_pack.render_pipeline', function($render) use ($app) {
-                $render->addFormat('text/plain', function($viewContext) {
-                    $viewContext->parent = null;
-                    return $viewContext->options['text'];
-                });
+        $app->register(new TwigServiceProvider, array(
+            'twig.paths' => function() use ($app) {
+                return $app['spark.action_pack.render_pipeline']->scriptPath->paths();
+            },
+            'twig.options' => function() use ($app) {
+                return ['cache' => "{$app['spark.data_directory']}/twig_cache"];
+            }
+        ));
 
-                $render->addFormat('text/html', function($viewContext) {
-                    if (isset($viewContext->options['html'])) {
-                        return $viewContext->options['html'];
-                    }
-                });
+        $app['twig'] = $app->share($app->extend('twig', function($twig) use ($app) {
+            foreach ($app['spark.action_pack.view.helpers'] as $id => $helper) {
+                $twig->addGlobal($id, $helper);
+            }
 
-                $render->addFormat('application/json', function($viewContext) {
-                    $viewContext->parent = null;
-                    $flags = 0;
+            return $twig;
+        }));
 
-                    if (@$viewContext->options['pretty']) {
-                        $flags |= JSON_PRETTY_PRINT;
-                    }
+        $app['spark.action_pack.view.script_path'] = $app->share(
+            $app->extend('spark.action_pack.view.script_path', function($scriptPath) {
+                $scriptPath->appendExtensions(\MetaTemplate\Template::getEngines()->getEngineExtensions());
+                $scriptPath->appendExtensions(['.phtml', '.php.html']);
+                return $scriptPath;
+            })
+        );
 
-                    return json_encode($viewContext->options['json'], $flags);
-                });
+        $app['dispatcher'] = $app->share(
+            $app->extend('dispatcher', function($dispatcher) use ($app) {
+                $dispatcher->addSubscriber(new View\TwigStrategy($app['twig']));
 
-                $render->scriptPath->appendExtensions(\MetaTemplate\Template::getEngines()->getEngineExtensions());
+                $dispatcher->addSubscriber(new View\MetaTemplateStrategy(
+                    $app['spark.action_pack.view.script_path'],
+                    $app['spark.action_pack.view.helpers'])
+                );
 
-                $render->addFallback(function($viewContext) {
-                    if (empty($viewContext->script)) return;
-
-                    $template = \MetaTemplate\Template::create($viewContext->script);
-
-                    if ($viewContext->response) {
-                        $headers = $viewContext->response->headers;
-
-                        if (is_callable([$template, 'getDefaultContentType']) and !$headers->has('Content-Type')) {
-                            $headers->set('Content-Type', $template->getDefaultContentType());
-                        }
-
-                        if ($headers->get('Content-Type') !== "text/html") {
-                            $viewContext->parent = null;
-                        }
-                    }
-
-                    return $template->render($viewContext);
-                });
-
-                return $render;
+                return $dispatcher;
             })
         );
     }

@@ -15,33 +15,34 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "silex/silex": "1.0.*@dev",
+        "silex/silex": "~1.0@dev",
         "spark/action-pack": "@dev",
-        "symfony/class-loader": "*",
-        "symfony/process": "2.1.*@stable",
-        "symfony/console": "2.1.*@stable",
-        "symfony/validator": "2.1.*@stable",
-        "chh/pipe-silex": "*@dev",
-        "chh/fileutils": "*@dev",
-        "chh/meta-template": "*@dev",
-        "jsonbuilder/jsonbuilder": "*",
-        "jms/cg": "*",
-        "evenement/evenement": "1.0.*",
-        "chh/cache-service-provider": "*",
-        "monolog/monolog": "1.*@stable",
-        "chh/kue": "*@dev",
-        "symfony/browser-kit": "*",
-        "symfony/css-selector": "*"
+        "symfony/class-loader": "~2.1",
+        "symfony/process": "~2.1",
+        "symfony/console": "~2.1",
+        "symfony/validator": "~2.1",
+        "chh/pipe-silex": "~1.0@dev",
+        "chh/fileutils": "~1.0",
+        "chh/meta-template": "~1.0@dev",
+        "jsonbuilder/jsonbuilder": "@dev",
+        "jms/cg": "@dev",
+        "evenement/evenement": "~1.0",
+        "chh/cache-service-provider": "~1.0",
+        "monolog/monolog": "~1.0",
+        "chh/kue": "@dev",
+        "symfony/browser-kit": "~2.1",
+        "symfony/css-selector": "~2.1",
+        "twig/twig": "~1.9"
     },
     "require-dev": {
-        "sami/sami": "*@dev",
+        "sami/sami": "@dev",
         "phpunit/phpunit": "~3.7",
-        "symfony/yaml": "*",
+        "symfony/yaml": "~2.1",
         "aptoma/twig-markdown": "*"
     },
     "autoload": {
         "psr-0": {
-            "Spark": "lib\/"
+            "Spark": "lib/"
         }
     },
     "bin": ["bin/spark"]

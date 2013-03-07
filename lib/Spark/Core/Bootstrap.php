@@ -23,6 +23,8 @@ class Bootstrap
     {
         require __DIR__ . '/../version_check.php';
 
+        \Symfony\Component\HttpFoundation\Request::enableHttpMethodParameterOverride();
+
         $app = new Application;
         $app['spark.env'] = $environment;
         $app['spark.root'] = $root;
@@ -66,7 +68,7 @@ class Bootstrap
         foreach (new \FilesystemIterator($initializers) as $f) {
             # Ensure a fresh scope for each initializer
             $initializer = function($app, $_file) {
-                require_once($file->getRealpath());
+                require_once($_file->getRealpath());
             };
 
             $initializer($app, $f);
