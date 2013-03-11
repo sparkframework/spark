@@ -36,13 +36,17 @@ $app['pipe.manifest'] = function() use ($app) {
 #
 # By default the files "application.js" and "application.css" get 
 # precompiled. To add your own files for precompilation, add them to
-# this ArrayObject:
+# this list:
 #
-# $app['pipe.precompile']->append('screen.less');
+# $app['pipe.precompile'] = $app->extend('pipe.precompile', function($assets) {
+#     $assets[] = "mobile.coffee";
+#
+#     return $assets;
+# });
 
 # Pipe load paths, which are used to look up relative paths.
 #
-# The load path is a doubly linked list and defaults to:
+# The load path is an array and defaults to:
 #
 # 1. app/assets/images/
 # 2. app/assets/javascripts/
@@ -53,6 +57,7 @@ $app['pipe.manifest'] = function() use ($app) {
 # To add your own load paths, simply extend the 'pipe.load_path' key:
 #
 # $app['pipe.load_path'] = $app->extend('pipe.load_path', function($loadPath) {
-#     $loadPath->push("foo");
-# });
+#     $loadPath[] = "/my/custom/dir";
 #
+#     return $loadPath;
+# });
