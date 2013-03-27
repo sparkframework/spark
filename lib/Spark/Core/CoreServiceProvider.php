@@ -133,12 +133,12 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
     protected function setupActionPackServiceProvider($app)
     {
-        $app['spark.action_pack.controller_class_resolver'] = $app->share(
-            $app->extend('spark.action_pack.controller_class_resolver', function($resolver) use ($app) {
-                $resolver->setDefaultModule($app['spark.default_module']);
-                $resolver->registerModule($app['spark.default_module'], Strings::camelize($app['spark.app.name']));
+        $app['spark.action_pack.controllers'] = $app->share(
+            $app->extend('spark.action_pack.controllers', function($controllers) use ($app) {
+                $controllers->setDefaultModule($app['spark.default_module']);
+                $controllers->registerModule($app['spark.default_module'], Strings::camelize($app['spark.app.name']));
 
-                return $resolver;
+                return $controllers;
             })
         );
 
