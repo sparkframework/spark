@@ -32,7 +32,8 @@
         "chh/kue": "@dev",
         "symfony/browser-kit": "~2.1",
         "symfony/css-selector": "~2.1",
-        "twig/twig": "~1.9"
+        "twig/twig": "~1.9",
+        "d11wtq/boris": "@dev"
     },
     "require-dev": {
         "sami/sami": "@dev",

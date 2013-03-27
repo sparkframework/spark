@@ -77,22 +77,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             return $generators;
         });
 
-        $app['console'] = $app->share(function($app) {
-            $console = new Console\Application('spark', \Spark\Spark::VERSION);
-
-            $console->add(new Command\CreateApplication);
-            $console->add($app['spark.generators']);
-            $console->add(new Command\Server($app));
-
-            $queueWorker = new Command\QueueWorker($app['queue']);
-            $queueWorker->setSilexApplication($app);
-
-            $console->add($queueWorker);
-
-            $console->add(new Command\Upgrade);
-
-            return $console;
-        });
+        $this->setupConsole($app);
 
         $app['queue'] = $app->share(function($app) {
             return new LocalQueue;
@@ -123,6 +108,27 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
 
         $app->register(new ActionPackServiceProvider);
         $this->setupActionPackServiceProvider($app);
+    }
+
+    protected function setupConsole($app)
+    {
+        $app['console'] = $app->share(function($app) {
+            $console = new Console\Application('spark', \Spark\Spark::VERSION);
+
+            $console->add(new Command\CreateApplication);
+            $console->add($app['spark.generators']);
+            $console->add(new Command\Server($app));
+            $console->add(new Command\Console($app));
+
+            $queueWorker = new Command\QueueWorker($app['queue']);
+            $queueWorker->setSilexApplication($app);
+
+            $console->add($queueWorker);
+
+            $console->add(new Command\Upgrade);
+
+            return $console;
+        });
     }
 
     protected function setupActionPackServiceProvider($app)

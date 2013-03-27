@@ -4,13 +4,12 @@
 $app['pipe.js_compressor'] = 'yuglify_js';
 $app['pipe.css_compressor'] = 'yuglify_css';
 
-# 'pipe.prefix' is prepended to all static links when precompiled files 
-# are used. Make sure this directory contains the precompiled files and 
+# 'pipe.prefix' is prepended to all static links when precompiled files
+# are used. Make sure this directory contains the precompiled files and
 # manifest and is servable by your web server.
 #
 # This is the default setting:
 #
-
 $app['pipe.prefix'] = "/assets";
 
 #
