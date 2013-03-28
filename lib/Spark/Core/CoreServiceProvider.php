@@ -124,7 +124,6 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $queueWorker->setSilexApplication($app);
 
             $console->add($queueWorker);
-
             $console->add(new Command\Upgrade);
 
             return $console;

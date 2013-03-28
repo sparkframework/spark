@@ -14,11 +14,15 @@ use Spark\Support\Strings;
 
 class CreateApplication extends Command
 {
+    protected $output;
+
     protected function configure()
     {
         $this->setName('create')
             ->setDescription('Creates a new application')
             ->addOption('skip-composer', null, InputOption::VALUE_NONE, "Skip installing dependencies after creating the skeleton")
+            ->addOption('chdir', 'C', InputOption::VALUE_REQUIRED, "Change directory before creating the application")
+            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, "Create application in this directory")
             ->addArgument('application-name', InputArgument::REQUIRED, 'Name of the application');
     }
 
@@ -27,15 +31,26 @@ class CreateApplication extends Command
         $name = $input->getArgument('application-name');
         $appName = Strings::camelize(basename($name), true);
 
-        if (is_dir($name)) {
+        $directory = $input->getOption('output') ?: $name;
+
+        if ($chdir = $input->getOption('chdir')) {
+            chdir($chdir);
+        }
+
+        if (is_dir($directory)) {
             $output->writeln("<error>Application '$name' already exists</error>");
             return 1;
         }
 
-        $output->writeln("Creating application <info>$appName</info>...");
+        $this->output = $output;
 
-        mkdir($name, 0755, true);
-        chdir($name);
+        mkdir($directory, 0755, true);
+        chdir($directory);
+
+        $output->writeln(sprintf(
+            "Creating application <info>%s</info> in %s...",
+            $appName, realpath($directory)
+        ));
 
         $directories = [
             "config/environments",
@@ -136,6 +151,7 @@ class CreateApplication extends Command
 
     protected function fileFromTemplate($file, $variables = [])
     {
+        $this->output->writeln("<info>Creating</info> $file");
         file_put_contents($file, $this->template($file, $variables));
     }
 
