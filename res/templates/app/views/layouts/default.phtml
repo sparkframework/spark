@@ -2,8 +2,10 @@
 <html>
     <head>
         <title>
-            <?= $this->block('title') ?>
+            <?= $_helper['block']('title') ?>
         </title>
+
+        <?= $_helper['asset']->linkTag('application.css') ?>
     </head>
     <body>
         <header role="banner">
@@ -11,7 +13,7 @@
         </header>
 
         <div id="flash">
-            <?php foreach ($this->flash()->get('notice', []) as $flash): ?>
+            <?php foreach ($_helper['flash']->get('notice', []) as $flash): ?>
             <div class="flash-notice">
                 <?= $flash ?>
             </div>
@@ -19,12 +21,14 @@
         </div>
 
         <section role="main">
-            <?= $this->block('content') ?>
+            <?= $_helper['block']('content') ?>
         </section>
 
         <footer>
             <p>Powered by <a href="http://github.com/CHH/spark">Spark Framework</a></p>
         </footer>
+
+        <?= $_helper['asset']->linkTag('application.js') ?>
     </body>
 </html>
 

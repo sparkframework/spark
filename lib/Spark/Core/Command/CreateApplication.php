@@ -81,12 +81,12 @@ class CreateApplication extends Command
         touch("data/.empty");
 
         # Create a default Controller
-        file_put_contents(
+        $this->createFile(
             "app/controllers/$appName/IndexController.php",
             $this->template("app/controllers/IndexController.php", ['AppName' => $appName])
         );
 
-        file_put_contents("app/views/index/index.phtml", "<h1>Hello World</h1>");
+        $this->createFile("app/views/index/index.phtml", "<h1>Hello World</h1>");
 
         $this->fileFromTemplate("public/index.php");
         $this->fileFromTemplate("public/.htaccess");
@@ -107,8 +107,8 @@ class CreateApplication extends Command
         $this->fileFromTemplate("config/environments/development.php");
         $this->fileFromTemplate("config/environments/testing.php");
 
-        file_put_contents("app/assets/stylesheets/application.css", "");
-        file_put_contents("app/assets/javascripts/application.js", "");
+        $this->createFile("app/assets/stylesheets/application.css", "/* This is the default stylesheet */");
+        $this->createFile("app/assets/javascripts/application.js", "/* This is the default javascript file */");
 
         $this->fileFromTemplate('tests/bootstrap.php');
         $this->fileFromTemplate('phpunit.dist.xml');
@@ -117,7 +117,7 @@ class CreateApplication extends Command
         $this->fileFromTemplate('composer.json');
         $this->fileFromTemplate('README.txt');
 
-        file_put_contents('.gitignore', join("\n", [
+        $this->createFile('.gitignore', join("\n", [
             "/vendor/",
             "/public/assets/",
             "/composer.phar",
@@ -153,6 +153,12 @@ class CreateApplication extends Command
     {
         $this->output->writeln("<info>Creating</info> $file");
         file_put_contents($file, $this->template($file, $variables));
+    }
+
+    protected function createFile($file, $content = null)
+    {
+        $this->output->writeln("<info>Creating</info> $file");
+        file_put_contents($file, $content ?: "");
     }
 
     protected function template($name, $variables = [])
