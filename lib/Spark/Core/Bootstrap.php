@@ -10,7 +10,8 @@ class Bootstrap
         'config/initializers' => 'config/intializers',
         'config/routes.php' => 'config/routes.php',
         'config/application.php' => 'config/application.php',
-        'config/environments' => 'config/environments'
+        'config/environments' => 'config/environments',
+        'config/middlewares.php' => 'config/middlewares.php'
     ];
 
     # Runs before all configuration is done.
@@ -37,7 +38,8 @@ class Bootstrap
         $configFiles = [
             "$root/" . static::$paths['config/application.php'],
             "$root/" . static::$paths['config/routes.php'],
-            "$root/" . static::$paths['config/environments'] . "/$environment.php"
+            "$root/" . static::$paths['config/environments'] . "/$environment.php",
+            "$root/" . static::$paths['config/middlewares.php']
         ];
 
         foreach ($configFiles as $file) {
@@ -53,7 +55,6 @@ class Bootstrap
         }
 
         static::end($app);
-
         return $app;
     }
 

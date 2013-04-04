@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\HttpFoundation\Request;
+
 if (php_sapi_name() === 'cli-server') {
     $_SERVER["SPARK_ENV"] = "development";
     $filename = __DIR__.preg_replace('#(\?.*)$#', '', $_SERVER['REQUEST_URI']);
@@ -12,5 +14,11 @@ if (php_sapi_name() === 'cli-server') {
 require_once(__DIR__ . "/../vendor/autoload.php");
 
 $app = require_once(__DIR__ . "/../config/bootstrap.php");
-$app->run();
+$app = $app['stack']->resolve($app);
 
+$request = Request::createFromGlobals();
+
+$response = $app->handle($request);
+$response->send();
+
+$app->terminate($request, $response);

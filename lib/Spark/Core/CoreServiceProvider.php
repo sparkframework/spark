@@ -99,6 +99,10 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             }));
         }
 
+        $app['stack'] = $app->share(function() {
+            return new \Stack\Stack;
+        });
+
         $app->register(new SessionServiceProvider);
         $app->register(new UrlGeneratorServiceProvider);
 
@@ -119,6 +123,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
             $console->add($app['spark.generators']);
             $console->add(new Command\Server($app));
             $console->add(new Command\Console($app));
+            $console->add(new Command\AppInfo($app));
 
             $queueWorker = new Command\QueueWorker($app['queue']);
             $queueWorker->setSilexApplication($app);

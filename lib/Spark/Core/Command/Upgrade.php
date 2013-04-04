@@ -33,7 +33,7 @@ class Upgrade extends Command
         });
 
         $this->migrate(3, "Add .htaccess", function() {
-            $templateDir = __DIR__ . '/../../../../res';
+            $templateDir = $this->getTemplateDir();
             copy("$templateDir/templates/public/.htaccess", "public/.htaccess");
         });
 
@@ -41,6 +41,16 @@ class Upgrade extends Command
             mkdir("config/initializers", 0777, true);
             touch('config/initializers/.empty');
         });
+
+        $this->migrate(5, "Add middleware support", function() {
+            copy("{$this->getTemplateDir()}/templates/config/middlewares.php", "config/middlewares.php");
+            copy("{$this->getTemplateDir()}/templates/public/index.php", "public/index.php");
+        });
+    }
+
+    protected function getTemplateDir()
+    {
+        return __DIR__ . '/../../../../res';
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
