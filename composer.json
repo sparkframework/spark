@@ -34,7 +34,7 @@
         "symfony/css-selector": "~2.1",
         "twig/twig": "~1.9",
         "d11wtq/boris": "@dev",
-        "stack/stack": "~1.0@dev"
+        "stack/builder": "~1.0@dev"
     },
     "require-dev": {
         "sami/sami": "@dev",

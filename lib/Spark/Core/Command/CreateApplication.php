@@ -48,7 +48,7 @@ class CreateApplication extends Command
         chdir($directory);
 
         $output->writeln(sprintf(
-            "Creating application <info>%s</info> in %s...",
+            "-----> Creating application <info>%s</info> in %s...",
             $appName, realpath($directory)
         ));
 
@@ -131,10 +131,11 @@ class CreateApplication extends Command
 
         $this->fileFromTemplate('config/application.php', ['AppName' => $appName]);
 
-        $output->writeln("Downloading Composer...");
+        $output->writeln("-----> Downloading Composer...");
         $this->downloadComposer();
 
         if (!$input->getOption('skip-composer')) {
+            $output->writeln("-----> Installing Application Dependencies");
             passthru('php composer.phar install --dev');
         }
 

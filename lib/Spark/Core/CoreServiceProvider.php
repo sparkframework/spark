@@ -100,7 +100,7 @@ class CoreServiceProvider implements \Silex\ServiceProviderInterface
         }
 
         $app['stack'] = $app->share(function() {
-            return new \Stack\Stack;
+            return new \Stack\Builder;
         });
 
         $app->register(new SessionServiceProvider);
