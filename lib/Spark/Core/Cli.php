@@ -4,25 +4,17 @@ namespace Spark\Core;
 
 class Cli
 {
-    protected $console;
-    protected $application;
-
-    function __construct()
-    {
-        if ($bootstrap = $this->findApplicationBootstrap()) {
-            if (!isset($_SERVER['SPARK_ENV'])) $_SERVER['SPARK_ENV'] = 'development';
-
-            $this->application = require($bootstrap);
-        } else {
-            $this->application = new \Spark\Application;
-        }
-
-        $this->console = $this->application['console'];
-    }
-
     function run()
     {
-        $this->console->run();
+        if (!isset($_SERVER['SPARK_ENV'])) $_SERVER['SPARK_ENV'] = 'development';
+
+        if ($bootstrap = $this->findApplicationBootstrap()) {
+            $app = require($bootstrap);
+        } else {
+            $app = new \Spark\Application;
+        }
+
+        return $app['console']->run();
     }
 
     protected function findApplicationBootstrap()
